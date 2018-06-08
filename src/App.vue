@@ -16,7 +16,8 @@
 </script>
 
 <style>
-	@import url('https://fonts.googleapis.com/css?family=Oxygen');
+	@import url('https://fonts.googleapis.com/css?family=Fira+Sans:500,700');
+	@import '~highlight.js/styles/ir-black.css';
 
 	body, html {
 		padding: 0;
@@ -24,7 +25,7 @@
 	}
 
 	#app {
-		font-family: 'Oxygen', sans-serif;
+		font-family: 'Fira Sans', sans-serif;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 	}

@@ -12,20 +12,22 @@
 		text-transform: uppercase;
 		text-align: center;
 		font-weight: bold;
-		margin: 15px;
+		margin: 10px;
 	}
 	.Logo > * {
-		margin: -15px;
+		margin: -10px;
 		padding: 0;
 	}
 	.Logo > :nth-child(1) {
-		font-size: 38px;
+		font-size: 40px;
+		line-height: 40px;
 	}
 	.Logo > :nth-child(2) {
-		font-size: 53px;
+		font-size: 58px;
+		line-height: 58px;
 	}
 	.Logo > :nth-child(3) {
-		font-size: 21px;
-		margin-top: 5px;
+		font-size: 22px;
+		line-height: 22px;
 	}
 </style>
