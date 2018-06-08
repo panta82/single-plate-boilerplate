@@ -13,6 +13,11 @@
 		text-align: center;
 		font-weight: bold;
 		margin: 10px;
+		text-shadow:
+				5px 5px 20px rgba(255,255,255,0.7),
+				5px -5px 20px rgba(255,255,255,0.7),
+				-5px 5px 20px rgba(255,255,255,0.7),
+				-5px -5px 20px rgba(255,255,255,0.7);
 	}
 	.Logo > * {
 		margin: -10px;
