@@ -1,4 +1,4 @@
-# Single screen boilerplate
+# Single plate boilerplate
 
-All your boilerplate, on a single screen.
+All your boilerplate, in a single plate.
 
