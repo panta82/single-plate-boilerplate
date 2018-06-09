@@ -66,6 +66,8 @@
 	}
 	.code code {
 		transition: background-color 2s;
+		tab-size: 2;
+		overflow-x: hidden;
 	}
 	.code.copied code {
 		transition: background-color 0s;

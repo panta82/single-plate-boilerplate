@@ -66,7 +66,7 @@ server.listen(port, () => {
 			appSetup.join('\n'),
 			handlers.join('\n'),
 			footer.join('\n')
-	].join('\n');
+	].join('\n\n');
 }
 
 export default {

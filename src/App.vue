@@ -2,10 +2,12 @@
 	<div id="App">
 		<Layout>
 			<template slot="left">
-				<Menu v-on:options="options = $event" />
+				<Menu
+						v-on:options="options = $event"
+						v-on:boilerplate="boilerplate = $event" />
 			</template>
 			<template slot="right">
-				<Content :options="options" />
+				<Content :blocks="blocks" />
 			</template>
 		</Layout>
 	</div>
@@ -16,6 +18,8 @@
 	import Menu from './components/Menu.vue';
 	import Content from './components/Content.vue';
 
+	import {generateBlockData} from './boilerplates/_tools';
+
 	export default {
 		name: 'App',
 		data () {
@@ -24,10 +28,20 @@
 				options: null
 			};
 		},
+
 		components: {
 			Layout,
 			Content,
 			Menu
+		},
+		computed: {
+			blocks () {
+				if (!this.boilerplate || !this.options) {
+					return null;
+				}
+
+				return generateBlockData(this.boilerplate, this.options);
+			}
 		}
 	};
 </script>

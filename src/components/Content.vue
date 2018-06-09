@@ -1,11 +1,12 @@
 <template>
 	<div class="Content">
-		<section>
-			<CodeBlock title="app.js" :code="code" instructions="Copy/paste this into your main code file" />
+		<section v-if="blocks">
+			<CodeBlock
+					v-for="block in blocks"
+					:title="block.title"
+					:code="block.code"
+					:instructions="block.instructions" />
 		</section>
-		<div>
-			{{options}}
-		</div>
 	</div>
 </template>
 
@@ -18,16 +19,8 @@
 			CodeBlock
 		},
 		props: [
-			'options'
+			'blocks'
 		],
-		data: () => {
-			return {
-				code: `const express = require('express');
-
-const app = express();
-`
-			};
-		}
 	};
 </script>
 
