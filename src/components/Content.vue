@@ -3,6 +3,9 @@
 		<section>
 			<CodeBlock title="app.js" :code="code" instructions="Copy/paste this into your main code file" />
 		</section>
+		<div>
+			{{options}}
+		</div>
 	</div>
 </template>
 
@@ -14,6 +17,9 @@
 		components: {
 			CodeBlock
 		},
+		props: [
+			'options'
+		],
 		data: () => {
 			return {
 				code: `const express = require('express');

@@ -10,10 +10,11 @@
 	.Logo {
 		color: #7828ee;
 		text-transform: uppercase;
-		text-align: center;
 		font-weight: bold;
 		margin: 10px;
 		cursor: default;
+		text-align: center;
+		transform: scaleY(0.9);
 	}
 	.Logo > * {
 		margin: -10px;
@@ -25,18 +26,17 @@
 		animation-iteration-count: infinite;
 	}
 	.Logo > :nth-child(1) {
-		font-size: 45px;
-		line-height: 45px;
+		font-size: 71px;
+		line-height: 60px;
 	}
 	.Logo > :nth-child(2) {
-		font-size: 54px;
-		line-height: 54px;
+		font-size: 84px;
+		line-height: 80px;
 		animation-delay: 1s;
 	}
 	.Logo > :nth-child(3) {
-		font-size: 24px;
-		line-height: 24px;
-		margin-top: 3px;
+		font-size: 38px;
+		line-height: 38px;
 		animation-delay: 2s;
 	}
 

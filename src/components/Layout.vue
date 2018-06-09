@@ -19,18 +19,18 @@
 	.Layout {
 		display: flex;
 		flex-direction: row;
-		min-height: 100vh;
+		height: 100vh;
 	}
 	.left {
-		flex-basis: 20%;
-		min-width: 200px;
-		max-width: 300px;
-		flex-shrink: 1;
-		flex-grow: 1;
+		width: 265px;
+		flex-shrink: 0;
+		flex-grow: 0;
+		overflow-y: scroll;
 	}
 	.right {
 		flex-basis: 80%;
 		flex-shrink: 1;
 		flex-grow: 1;
+		overflow-y: scroll;
 	}
 </style>

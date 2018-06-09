@@ -2,10 +2,10 @@
 	<div id="App">
 		<Layout>
 			<template slot="left">
-				<Menu />
+				<Menu v-on:options="options = $event" />
 			</template>
 			<template slot="right">
-				<Content />
+				<Content :options="options" />
 			</template>
 		</Layout>
 	</div>
