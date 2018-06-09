@@ -1,5 +1,5 @@
 <template xmlns:v-clipboard="http://www.w3.org/1999/xhtml">
-	<div class="CodeBox">
+	<div class="CodeBlock">
 		<div class="title">{{title}}</div>
 		<div v-bind:class="['code', copied && 'copied']">
 			<pre v-highlightjs="code"><code v-bind:class="[language]"></code></pre>
@@ -13,7 +13,7 @@
 
 <script>
 	export default {
-		name: 'CodeBox',
+		name: 'CodeBlock',
 		data: () => {
 			return {
 				copied: false
@@ -42,7 +42,7 @@
 </script>
 
 <style scoped>
-	.CodeBox {}
+	.CodeBlock {}
 
 	.title {
 		color: #d1d5d5;

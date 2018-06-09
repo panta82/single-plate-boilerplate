@@ -1,16 +1,33 @@
 <template>
-	<div id="app">
-		<Layout />
+	<div id="App">
+		<Layout>
+			<template slot="left">
+				<Menu />
+			</template>
+			<template slot="right">
+				<Content />
+			</template>
+		</Layout>
 	</div>
 </template>
 
 <script>
 	import Layout from './components/Layout.vue';
+	import Menu from './components/Menu.vue';
+	import Content from './components/Content.vue';
 
 	export default {
-		name: 'app',
+		name: 'App',
+		data () {
+			return {
+				boilerplate: null,
+				options: null
+			};
+		},
 		components: {
-			Layout
+			Layout,
+			Content,
+			Menu
 		}
 	};
 </script>
@@ -19,14 +36,6 @@
 	@import url('https://fonts.googleapis.com/css?family=Fira+Sans:500,700');
 	@import '~highlight.js/styles/ir-black.css';
 
-	body, html {
-		padding: 0;
-		margin: 0;
-	}
-
-	#app {
-		font-family: 'Fira Sans', sans-serif;
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-	}
+	@import "styles/layout.css";
+	@import 'styles/fields.css';
 </style>

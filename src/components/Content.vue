@@ -1,18 +1,18 @@
 <template>
 	<div class="Content">
 		<section>
-			<CodeBox title="app.js" :code="code" instructions="Copy/paste this into your main code file" />
+			<CodeBlock title="app.js" :code="code" instructions="Copy/paste this into your main code file" />
 		</section>
 	</div>
 </template>
 
 <script>
-	import CodeBox from './widgets/CodeBox.vue';
+	import CodeBlock from './widgets/CodeBlock.vue';
 
 	export default {
 		name: 'Menu',
 		components: {
-			CodeBox
+			CodeBlock
 		},
 		data: () => {
 			return {

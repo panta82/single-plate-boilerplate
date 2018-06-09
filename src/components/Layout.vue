@@ -1,24 +1,17 @@
 <template>
 	<div class="Layout">
 		<div class="left">
-			<Menu/>
+			<slot name="left" />
 		</div>
 		<div class="right">
-			<Content/>
+			<slot name="right" />
 		</div>
 	</div>
 </template>
 
 <script>
-	import Menu from './Menu.vue';
-	import Content from './Content.vue';
-
 	export default {
 		name: 'Layout',
-		components: {
-			Content,
-			Menu
-		}
 	};
 </script>
 
