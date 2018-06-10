@@ -12,7 +12,7 @@ function generateMain({port, cors, templates, staticFiles}) {
 	];
 	
 	const options = [
-			`const port = process.env.PORT || ${port};`
+		`const port = process.env.PORT || ${port};`
 	];
 	
 	const appSetup = [
@@ -61,17 +61,17 @@ server.listen(port, () => {
 	}
 	
 	return [
-			imports.join('\n'),
-			options.join('\n'),
-			appSetup.join('\n'),
-			handlers.join('\n'),
-			footer.join('\n')
+		imports.join('\n'),
+		options.join('\n'),
+		appSetup.join('\n'),
+		handlers.join('\n'),
+		footer.join('\n')
 	].join('\n\n');
 }
 
 export default {
-	title: 'Express simple app',
-	description: `Super simple one file express app. Load port from ENV, include a few basic modules`,
+	title: 'Simple express.js app',
+	description: `One file node.js app with express server, file parser and CORS handling.`,
 	
 	options: {
 		port: {

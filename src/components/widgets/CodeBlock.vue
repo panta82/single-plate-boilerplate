@@ -4,8 +4,9 @@
 		<div v-bind:class="['code', copied && 'copied']">
 			<pre v-highlightjs="code"><code v-bind:class="[language]"></code></pre>
 			<button type="button"
-				class="copy"
-				@click="copyToClipboard">COPY</button>
+					class="copy"
+					@click="copyToClipboard">COPY
+			</button>
 		</div>
 		<div class="instructions">{{instructions}}</div>
 	</div>
@@ -42,7 +43,8 @@
 </script>
 
 <style scoped>
-	.CodeBlock {}
+	.CodeBlock {
+	}
 
 	.title {
 		color: #d1d5d5;
@@ -61,14 +63,17 @@
 		position: relative;
 		border: 1px solid #a5a8a8;
 	}
+
 	.code pre {
 		margin: 0;
 	}
+
 	.code code {
 		transition: background-color 2s;
 		tab-size: 2;
 		overflow-x: hidden;
 	}
+
 	.code.copied code {
 		transition: background-color 0s;
 		background: #748899;
@@ -88,6 +93,7 @@
 		padding: 4px;
 		border: none;
 	}
+
 	.copy:hover {
 		opacity: 1;
 	}

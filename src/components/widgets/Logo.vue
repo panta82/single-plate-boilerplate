@@ -14,8 +14,8 @@
 		margin: 10px;
 		cursor: default;
 		text-align: center;
-		transform: scaleY(0.9);
 	}
+
 	.Logo > * {
 		margin: -10px;
 		padding: 0;
@@ -25,15 +25,18 @@
 		animation-direction: alternate;
 		animation-iteration-count: infinite;
 	}
+
 	.Logo > :nth-child(1) {
 		font-size: 71px;
 		line-height: 60px;
 	}
+
 	.Logo > :nth-child(2) {
 		font-size: 84px;
 		line-height: 80px;
 		animation-delay: 1s;
 	}
+
 	.Logo > :nth-child(3) {
 		font-size: 38px;
 		line-height: 38px;

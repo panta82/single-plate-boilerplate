@@ -2,12 +2,13 @@
 	<div id="App">
 		<Layout>
 			<template slot="left">
-				<Menu
+				<Sidebar
+						:boilerplates="boilerplates"
 						v-on:options="options = $event"
-						v-on:boilerplate="boilerplate = $event" />
+						v-on:boilerplate="boilerplate = $event"/>
 			</template>
 			<template slot="right">
-				<Content :blocks="blocks" />
+				<Content :blocks="blocks"/>
 			</template>
 		</Layout>
 	</div>
@@ -15,15 +16,18 @@
 
 <script>
 	import Layout from './components/Layout.vue';
-	import Menu from './components/Menu.vue';
+	import Sidebar from './components/Sidebar.vue';
 	import Content from './components/Content.vue';
 
-	import {generateBlockData} from './boilerplates/_tools';
+	import { generateBlockData, loadBoilerplates } from './lib/tools';
+
+	const boilerplates = loadBoilerplates();
 
 	export default {
 		name: 'App',
-		data () {
+		data() {
 			return {
+				boilerplates,
 				boilerplate: null,
 				options: null
 			};
@@ -32,10 +36,10 @@
 		components: {
 			Layout,
 			Content,
-			Menu
+			Sidebar
 		},
 		computed: {
-			blocks () {
+			blocks() {
 				if (!this.boilerplate || !this.options) {
 					return null;
 				}
@@ -49,7 +53,6 @@
 <style>
 	@import url('https://fonts.googleapis.com/css?family=Fira+Sans:500,700');
 	@import '~highlight.js/styles/ir-black.css';
-
 	@import "styles/layout.css";
 	@import 'styles/fields.css';
 </style>

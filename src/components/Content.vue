@@ -3,9 +3,11 @@
 		<section v-if="blocks">
 			<CodeBlock
 					v-for="block in blocks"
+					:key="block.name"
+					:language="block.language"
 					:title="block.title"
 					:code="block.code"
-					:instructions="block.instructions" />
+					:instructions="block.instructions"/>
 		</section>
 	</div>
 </template>
