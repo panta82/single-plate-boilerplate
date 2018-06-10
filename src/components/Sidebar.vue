@@ -4,37 +4,30 @@
 
 		<BoilerplateSelect :boilerplates="boilerplates" v-model="boilerplate"/>
 
-		<!--<div v-if="boilerplate">-->
-			<!--<NumberField :label="boilerplate.options.port.label" v-model="options.port"/>-->
-		<!--</div>-->
+		<div v-if="boilerplate && options">
+			<FieldAdapter
+					v-for="option in boilerplate.options"
+					:option="option"
+					v-model="options[option.key]" />
+		</div>
 	</div>
 </template>
 
 <script>
 	import Logo from './widgets/Logo.vue';
-	import NumberField from './fields/NumberField.vue';
+	import FieldAdapter from './fields/FieldAdapter.vue';
 	import BoilerplateSelect from './widgets/BoilerplateSelect';
 
-	import express from '../boilerplates/express.js';
+	import {generateDefaultOptions} from '../lib/tools';
 
 	export default {
 		name: 'Sidebar',
 		props: ['boilerplates'],
 		data() {
-			const options = Object.keys(express.options).reduce((o, key) => {
-				o[key] = express.options[key].default;
-				return o;
-			}, {});
-
 			return {
 				boilerplate: null,
-				options
+				options: null
 			};
-		},
-		created() {
-			// TODO
-			//this.$emit('boilerplate', this.boilerplate);
-			//this.$emit('options', this.options);
 		},
 		watch: {
 			options: {
@@ -44,14 +37,16 @@
 				deep: true
 			},
 			boilerplate () {
-				console.log('watch b');
+				if (this.boilerplate) {
+					this.options = generateDefaultOptions(this.boilerplate);
+				}
 				this.$emit('boilerplate', this.boilerplate);
 			}
 		},
 		components: {
 			Logo,
 			BoilerplateSelect,
-			NumberField,
+			FieldAdapter,
 		}
 	};
 </script>

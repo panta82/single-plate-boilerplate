@@ -73,20 +73,15 @@ export default {
 	title: 'Simple express.js app',
 	description: `One file node.js app with express server, file parser and CORS handling.`,
 	
-	options: {
-		port: {
+	options: [
+		{
+			key: 'port',
 			label: 'Default port',
 			type: 'Number',
 			default: 3000
 		},
-		
-		cors: {
-			label: 'CORS?',
-			type: 'Option',
-			default: true
-		},
-		
-		templates: {
+		{
+			key: 'templates',
 			label: 'Template support',
 			type: 'Choice',
 			options: [
@@ -96,13 +91,19 @@ export default {
 			],
 			default: TEMPLATES.none
 		},
-		
-		staticFiles: {
+		{
+			key: 'cors',
+			label: 'CORS?',
+			type: 'Toggle',
+			default: true
+		},
+		{
+			key: 'staticFiles',
 			label: 'Static files',
-			type: 'Option',
+			type: 'Toggle',
 			default: false
 		}
-	},
+	],
 	
 	blocks: [
 		{

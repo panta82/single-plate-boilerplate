@@ -2,7 +2,8 @@ function generateScript() {
 	return `
 #!/usr/bin/env bash
 
-DIR="$( cd "$( dirname "\${BASH_SOURCE[0]}" )" && pwd )"
+REL_DIR="\`dirname \\"$0\\"\`"
+DIR=\`readlink -e $this_rel_path\`
 
 WORDS=
 
@@ -49,9 +50,6 @@ main $*
 export default {
 	title: 'Bash script',
 	description: `Bash script that readies its location and argument parsing`,
-	
-	options: {
-	},
 	
 	blocks: [
 		{

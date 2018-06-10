@@ -4,8 +4,8 @@
 		<input type="number"
 				:title="label"
 				:id="id"
-				v-bind:value="value"
-				v-on:input="$emit('input', $event.target.value)"/>
+				:value="value"
+				@input="$emit('input', $event.target.value)"/>
 	</div>
 </template>
 
