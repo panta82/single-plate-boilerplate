@@ -35,13 +35,16 @@
 		watch: {
 			options: {
 				handler(options) {
+					if (this.boilerplate) {
+						this.$store.put('options.' + this.boilerplate.id, options);
+					}
 					this.$emit('options', options);
 				},
 				deep: true
 			},
 			boilerplate () {
 				if (this.boilerplate) {
-					this.options = generateDefaultOptions(this.boilerplate);
+					this.options = this.$store.get('options.' + this.boilerplate.id, generateDefaultOptions(this.boilerplate));
 				}
 				this.$emit('boilerplate', this.boilerplate);
 			}

@@ -21,8 +21,10 @@ export const generateDefaultOptions = (boilerplate) => {
 export const loadBoilerplates = () => {
 	const boilerplates = [];
 	const r = require.context('../boilerplates', false, /\.js$/);
-	r.keys().forEach(key => {
-		boilerplates.push(r(key).default);
+	r.keys().forEach(path => {
+		const boilerplate = r(path).default;
+		boilerplate.id = path;
+		boilerplates.push(boilerplate);
 	});
 	return boilerplates;
 };
