@@ -1,6 +1,9 @@
 <template xmlns:v-clipboard="http://www.w3.org/1999/xhtml">
 	<div class="CodeBlock">
-		<div class="title">{{title}}</div>
+		<div class="header">
+			<div class="language">{{language}}</div>
+			<div class="title">{{title}}</div>
+		</div>
 		<div v-bind:class="['code', copied && 'copied']">
 			<pre v-highlightjs="code"><code v-bind:class="[language]"></code></pre>
 			<button type="button"
@@ -46,10 +49,19 @@
 	.CodeBlock {
 	}
 
+	.language {
+		background-color: #a5a8a8;
+		text-transform: uppercase;
+		display: inline-block;
+		padding: 5px;
+		font-weight: bold;
+	}
+
 	.title {
 		color: #d1d5d5;
 		font-size: 16px;
-		margin: 5px;
+		margin: 5px 10px;
+		display: inline-block;
 	}
 
 	.instructions {

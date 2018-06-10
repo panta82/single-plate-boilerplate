@@ -1,6 +1,11 @@
 <template>
 	<div class="Content">
 		<section v-if="blocks">
+			<header>
+				<h1>{{title}}</h1>
+				<h2>{{description}}</h2>
+			</header>
+
 			<CodeBlock
 					v-for="block in blocks"
 					:key="block.name"
@@ -21,6 +26,8 @@
 			CodeBlock
 		},
 		props: [
+			'title',
+			'description',
 			'blocks'
 		],
 	};
@@ -32,7 +39,26 @@
 		min-height: 100vh;
 	}
 
+	h1 {
+		color: #dfe3e4;
+		text-shadow: 1px 1px 5px rgba(0,0,0,0.2);
+		margin: 0;
+	}
+	h2 {
+		font-size: 1.1em;
+		margin: 5px 0;
+		color: #c5c9ca;
+	}
+
 	section {
 		padding: 20px;
+	}
+
+	header {
+		margin-bottom: 50px;
+	}
+
+	.CodeBlock {
+		margin-top: 40px;
 	}
 </style>

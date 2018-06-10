@@ -28,3 +28,10 @@
 		}
 	};
 </script>
+
+<style>
+	.ToggleField + .ToggleField {
+		/* Group toggle fields into blocks */
+		margin-top: 5px;
+	}
+</style>

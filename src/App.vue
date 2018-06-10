@@ -8,7 +8,10 @@
 						v-on:boilerplate="boilerplate = $event"/>
 			</template>
 			<template slot="right">
-				<Content :blocks="blocks"/>
+				<Content
+						:title="boilerplate && boilerplate.title"
+						:description="boilerplate && boilerplate.description"
+						:blocks="blocks"/>
 			</template>
 		</Layout>
 	</div>

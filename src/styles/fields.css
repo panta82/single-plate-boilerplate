@@ -8,6 +8,8 @@
 	font-size: 14px;
 }
 
+/* TEXT *****************************************************************************/
+
 .field input[type=text],
 .field input[type=number] {
 	display: block;

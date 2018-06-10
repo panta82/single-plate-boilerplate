@@ -10,6 +10,8 @@
 					:option="option"
 					v-model="options[option.key]" />
 		</div>
+
+		<ArrowIcon v-if="!boilerplate" />
 	</div>
 </template>
 
@@ -17,6 +19,7 @@
 	import Logo from './widgets/Logo.vue';
 	import FieldAdapter from './fields/FieldAdapter.vue';
 	import BoilerplateSelect from './widgets/BoilerplateSelect';
+	import ArrowIcon from './widgets/ArrowIcon';
 
 	import {generateDefaultOptions} from '../lib/tools';
 
@@ -47,6 +50,7 @@
 			Logo,
 			BoilerplateSelect,
 			FieldAdapter,
+			ArrowIcon
 		}
 	};
 </script>
@@ -65,5 +69,30 @@
 
 	.BoilerplateSelect {
 		margin-bottom: 20px;
+	}
+</style>
+<style>
+	.Sidebar .ArrowIcon {
+		text-align: center;
+		animation: bouncing 1.5s ease 0s infinite normal;
+		margin-top: 30px;
+	}
+	.Sidebar .ArrowIcon svg {
+		fill: rgba(0,0,0,0.1);
+	}
+
+	@keyframes bouncing {
+		0% {
+			transform: translateY(0);
+		}
+		30% {
+			transform: translateY(-10px);
+		}
+		80% {
+			transform: translateY(0);
+		}
+		100% {
+			transform: translateY(0);
+		}
 	}
 </style>

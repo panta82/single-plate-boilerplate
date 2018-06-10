@@ -9,6 +9,7 @@ function generateMain({port, cors, templates, staticFiles}) {
 		`const http = require('http');`,
 		'',
 		`const express = require('express');`,
+		`const express = require('body-parser');`,
 	];
 	
 	const options = [
@@ -17,6 +18,7 @@ function generateMain({port, cors, templates, staticFiles}) {
 	
 	const appSetup = [
 		`const app = require('app');`,
+		`app.use(bodyParser.json());`
 	];
 	
 	const handlers = [
@@ -69,6 +71,26 @@ server.listen(port, () => {
 	].join('\n\n');
 }
 
+function generateBash({cors, templates}) {
+	const modules = [
+		'express',
+		'body-parser'
+	];
+	
+	if (cors) {
+		modules.push('cors');
+	}
+	
+	if (templates === TEMPLATES.pug) {
+		modules.push('pug');
+	}
+	else if (templates === TEMPLATES.ejs) {
+		modules.push('ejs');
+	}
+	
+	return `npm install --save ${modules.join(' ')}`;
+}
+
 export default {
 	title: 'Simple express.js app',
 	description: `One file node.js app with express server, file parser and CORS handling.`,
@@ -111,6 +133,13 @@ export default {
 			language: 'javascript',
 			instructions: 'Copy/paste this into your main code file',
 			code: generateMain
+		},
+		
+		{
+			title: null,
+			language: 'bash',
+			instructions: 'Execute this in your terminal',
+			code: generateBash
 		}
 	]
 };
