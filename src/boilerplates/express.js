@@ -7,9 +7,10 @@ const TEMPLATES = {
 function generateMain({port, cors, templates, staticFiles}) {
 	const imports = [
 		`const http = require('http');`,
+		`const libPath = require('path');`,
 		'',
 		`const express = require('express');`,
-		`const express = require('body-parser');`,
+		`const bodyParser = require('body-parser');`,
 	];
 	
 	const options = [
@@ -17,15 +18,19 @@ function generateMain({port, cors, templates, staticFiles}) {
 	];
 	
 	const appSetup = [
-		`const app = require('app');`,
+		`const app = express();`,
 		`app.use(bodyParser.json());`
 	];
 	
+	const apiEndpoint = templates !== TEMPLATES.none || staticFiles
+		? '/api/v1/hello'
+		: '/';
+	
 	const handlers = [
 		`
-app.get('/', (req, res, next) => {
+app.get('${apiEndpoint}', (req, res, next) => {
 	res.send({
-		result: 'Hello world'
+		result: 'Hello, ' + (req.query.word || 'world')
 	});
 });
 		`.trim()
@@ -59,7 +64,7 @@ server.listen(port, () => {
 	}
 	
 	if (staticFiles) {
-		appSetup.push(`\napp.use(express.static('public'))`);
+		appSetup.push(`\napp.use(express.static(libPath.resolve(__dirname, './public')));`);
 	}
 	
 	return [

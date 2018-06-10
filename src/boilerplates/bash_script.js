@@ -3,18 +3,21 @@ function generateScript() {
 #!/usr/bin/env bash
 
 REL_DIR="\`dirname \\"$0\\"\`"
-DIR=\`readlink -e $this_rel_path\`
+DIR=\`readlink -e $REL_DIR\`
 
-WORDS=
+WORDS=()
 
 usage() {
-	echo 'Simple script to echo list of words'
-	echo 'Usage:'
-	echo
-	echo '    script.sh [-h|--help] <word1> <word2>...'
-	echo
-	echo '-h|--help        Print this help screen and exit'
-	echo
+	cat <<END
+Simple script to echo a list of words
+
+Usage:
+  $0 [-h|--help] <word1> <word2>...
+
+Switches:
+  -h|--help        Print this help screen and exit
+
+END
 }
 
 fatal() {
@@ -27,7 +30,7 @@ parse_args() {
 		if [[ "\${arg:0:1}" != '-' ]]; then
 			WORDS+=($arg)
 		elif [[ "$arg" = '-h' || "$arg" = '--help' ]]; then
-			usage
+			usage $*
 			exit 0
 		else
 			fatal "Invalid argument: '$arg'"
@@ -36,10 +39,10 @@ parse_args() {
 }
 
 main() {
-	parse_args $@
+	parse_args $*
 	
 	for word in "\${WORDS[@]}"; do
-  	echo "\${word}"
+  		echo "\${word}"
 	done
 }
 
