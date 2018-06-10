@@ -11,6 +11,14 @@
 			:value="value"
 			@input="$emit('input', $event)"/>
 
+	<SelectField
+			v-else-if="option.type === 'Select'"
+			:label="option.label"
+			:value="value"
+			:options="option.options"
+			:default="option.default"
+			@input="$emit('input', $event)"/>
+
 	<div v-else class="error">
 		Unsupported field type: "{{option.type}}"
 	</div>
@@ -19,6 +27,7 @@
 <script>
 	import NumberField from './NumberField.vue';
 	import ToggleField from './ToggleField.vue';
+	import SelectField from './SelectField.vue';
 
 	export default {
 		name: 'FieldAdapter',
@@ -30,6 +39,7 @@
 		components: {
 			NumberField,
 			ToggleField,
+			SelectField,
 		}
 	};
 </script>

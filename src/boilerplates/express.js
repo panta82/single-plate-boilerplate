@@ -83,7 +83,7 @@ export default {
 		{
 			key: 'templates',
 			label: 'Template support',
-			type: 'Choice',
+			type: 'Select',
 			options: [
 				{value: TEMPLATES.none, title: 'None'},
 				{value: TEMPLATES.ejs, title: 'EJS'},
