@@ -30,7 +30,7 @@
 </script>
 
 <style>
-	.ToggleField + .ToggleField {
+	.field.ToggleField + .field.ToggleField {
 		/* Group toggle fields into blocks */
 		margin-top: 5px;
 	}

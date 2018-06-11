@@ -22,19 +22,27 @@ function generateMain({port, cors, templates, staticFiles}) {
 		`app.use(bodyParser.json());`
 	];
 	
+	const handlers = [];
+	
+	if (templates !== TEMPLATES.none) {
+		handlers.push(`
+app.get('/', (req, res, next) => {
+	res.render('index');
+});
+		`.trim());
+	}
+	
 	const apiEndpoint = templates !== TEMPLATES.none || staticFiles
 		? '/api/v1/hello'
 		: '/';
-	
-	const handlers = [
-		`
+	handlers.push(`
 app.get('${apiEndpoint}', (req, res, next) => {
 	res.send({
 		result: 'Hello, ' + (req.query.word || 'world')
 	});
 });
 		`.trim()
-	];
+	);
 	
 	const footer = [
 		`
@@ -71,7 +79,7 @@ server.listen(port, () => {
 		imports.join('\n'),
 		options.join('\n'),
 		appSetup.join('\n'),
-		handlers.join('\n'),
+		handlers.join('\n\n'),
 		footer.join('\n')
 	].join('\n\n');
 }
@@ -97,8 +105,8 @@ function generateBash({cors, templates}) {
 }
 
 export default {
-	title: 'Simple express.js app',
-	description: `One file node.js app with express server, file parser and CORS handling.`,
+	title: 'Express.js app',
+	description: `Single file node.js app with express server and a few standard features`,
 	
 	options: [
 		{
@@ -134,7 +142,7 @@ export default {
 	
 	blocks: [
 		{
-			title: 'app.js',
+			title: null,
 			language: 'javascript',
 			instructions: 'Copy/paste this into your main code file',
 			code: generateMain

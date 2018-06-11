@@ -2,6 +2,8 @@ function generateScript() {
 	return `
 #!/usr/bin/env bash
 
+set -o errexit
+
 REL_DIR="\`dirname \\"$0\\"\`"
 DIR=\`readlink -e $REL_DIR\`
 
@@ -12,7 +14,7 @@ usage() {
 Simple script to echo a list of words
 
 Usage:
-  $0 [-h|--help] <word1> <word2>...
+  $(basename "$0") [-h|--help] <word1> <word2>...
 
 Switches:
   -h|--help        Print this help screen and exit
@@ -30,7 +32,7 @@ parse_args() {
 		if [[ "\${arg:0:1}" != '-' ]]; then
 			WORDS+=($arg)
 		elif [[ "$arg" = '-h' || "$arg" = '--help' ]]; then
-			usage $*
+			usage "$*"
 			exit 0
 		else
 			fatal "Invalid argument: '$arg'"
@@ -39,24 +41,23 @@ parse_args() {
 }
 
 main() {
-	parse_args $*
+	parse_args "$*"
 	
 	for word in "\${WORDS[@]}"; do
   		echo "\${word}"
 	done
 }
 
-main $*
+main "$*"
 	`.trim();
 }
 
 export default {
 	title: 'Bash script',
-	description: `Bash script that readies its location and argument parsing`,
+	description: `Bash script with a few basic amenities and command line parsing`,
 	
 	blocks: [
 		{
-			title: 'script.sh',
 			language: 'bash',
 			instructions: `Add this to your bash script. Don't forget to make it executable`,
 			code: generateScript

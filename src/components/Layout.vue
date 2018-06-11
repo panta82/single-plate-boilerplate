@@ -19,20 +19,20 @@
 	.Layout {
 		display: flex;
 		flex-direction: row;
-		height: 100vh;
+		min-height: 100vh;
+		overflow-y: auto;
+		align-items: stretch;
 	}
 
 	.left {
-		width: 265px;
+		width: 250px;
 		flex-shrink: 0;
 		flex-grow: 0;
-		overflow-y: scroll;
 	}
 
 	.right {
 		flex-basis: 80%;
 		flex-shrink: 1;
 		flex-grow: 1;
-		overflow-y: scroll;
 	}
 </style>
