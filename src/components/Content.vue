@@ -1,5 +1,8 @@
 <template>
 	<div class="Content">
+		<a class="repo" href="https://github.com/panta82/single-plate-boilerplate" target="_blank">
+			<img src="../assets/github.png" />
+		</a>
 		<section v-if="blocks">
 			<header>
 				<h1>{{title}}</h1>
@@ -37,6 +40,23 @@
 	.Content {
 		background: linear-gradient(to bottom, #596876 0%, #262c32 100%);
 		min-height: 100vh;
+	}
+
+	.repo {
+		position: absolute;
+		opacity: 0.5;
+		top: 20px;
+		right: 20px;
+		width: 40px;
+		height: 40px;
+		transition: all 0.3s;
+	}
+	.repo:hover {
+		opacity: 1;
+	}
+	.repo img {
+		width: 100%;
+		height: 100%;
 	}
 
 	h1 {

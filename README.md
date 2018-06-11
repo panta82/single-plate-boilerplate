@@ -18,7 +18,7 @@ npm run serve
 Boilerplates are available as loose files inside `src/boilerplates`.
 They are auto-loaded during build.
 
-See `express.js` for example what a boilerplate can export.
+See `express.js` for an example of what a boilerplate can export.
 
 ### License
 
