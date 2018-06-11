@@ -1,21 +1,37 @@
 <template xmlns:v-clipboard="http://www.w3.org/1999/xhtml">
 	<div class="CodeBlock">
-		<div class="header">
-			<div class="language">{{language}}</div>
-			<div class="title">{{title}}</div>
-		</div>
-		<div v-bind:class="['code', copied && 'copied']">
-			<pre v-highlightjs="code"><code v-bind:class="[language]"></code></pre>
-			<button type="button"
-					class="copy"
-					@click="copyToClipboard">COPY
-			</button>
+		<div :class="{wrapper: true, 'with-preview': enablePreview}">
+			<section class="content">
+				<div class="header">
+					<div class="language">{{language}}</div>
+					<div class="title">{{title}}</div>
+				</div>
+				<div v-bind:class="['code', copied && 'copied']">
+					<pre v-highlightjs="code"><code v-bind:class="[language]"></code></pre>
+					<button type="button"
+							class="copy"
+							@click="copyToClipboard">COPY
+					</button>
+				</div>
+			</section>
+			<section class="preview" v-if="enablePreview">
+				<div class="header">
+					<div class="language">PREVIEW</div>
+				</div>
+				<iframe class="preview-html" v-if="language === 'html'"
+						:srcdoc="code" sandbox="" src="about:blank">
+				</iframe>
+			</section>
 		</div>
 		<div class="instructions">{{instructions}}</div>
 	</div>
 </template>
 
 <script>
+	const PREVIEW_LANGUAGES = {
+		html: 'html'
+	};
+
 	export default {
 		name: 'CodeBlock',
 		data: () => {
@@ -29,6 +45,11 @@
 			'title',
 			'instructions'
 		],
+		computed: {
+			enablePreview () {
+				return PREVIEW_LANGUAGES[this.language];
+			}
+		},
 		methods: {
 			copyToClipboard: function () {
 				this.$copyText(this.code).then(() => {
@@ -46,7 +67,19 @@
 </script>
 
 <style scoped>
-	.CodeBlock {
+	.wrapper.with-preview {
+		display: flex;
+		flex-direction: row;
+	}
+	.wrapper.with-preview > * {
+		width: 50%;
+		position: relative;
+	}
+
+	.preview iframe {
+		width: 100%;
+		height: calc(100% - 29px);
+		border: 1px solid #a5a8a8;
 	}
 
 	.language {
@@ -83,7 +116,6 @@
 	.code code {
 		transition: background-color 2s;
 		tab-size: 2;
-		overflow-x: hidden;
 	}
 
 	.code.copied code {

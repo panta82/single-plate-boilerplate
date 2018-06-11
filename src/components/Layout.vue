@@ -31,8 +31,8 @@
 	}
 
 	.right {
-		flex-basis: 80%;
 		flex-shrink: 1;
 		flex-grow: 1;
+		min-width: 0;
 	}
 </style>
