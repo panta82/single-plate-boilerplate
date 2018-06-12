@@ -54,7 +54,7 @@ server.listen(port, () => {
 	];
 	
 	if (cors) {
-		imports.push(`const cors = require('cors')`);
+		imports.push(`const cors = require('cors');`);
 		appSetup.push(`app.use(cors());`);
 	}
 	
