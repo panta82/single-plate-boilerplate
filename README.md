@@ -2,6 +2,8 @@
 
 All your boilerplate, in a single plate.
 
+http://spb.pantas.net/
+
 ![Screenshot](misc/screenshot.png)
 
 Single page app with various boilerplates available for easy copy & paste.
