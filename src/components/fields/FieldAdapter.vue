@@ -5,6 +5,12 @@
 			:value="value"
 			@input="$emit('input', $event)"/>
 
+  <TextField
+      v-else-if="option.type === 'Text'"
+      :label="option.label"
+      :value="value"
+      @input="$emit('input', $event)"/>
+  
 	<ToggleField
 			v-else-if="option.type === 'Toggle'"
 			:label="option.label"
@@ -26,6 +32,7 @@
 
 <script>
 	import NumberField from './NumberField.vue';
+	import TextField from './TextField.vue';
 	import ToggleField from './ToggleField.vue';
 	import SelectField from './SelectField.vue';
 
@@ -38,6 +45,7 @@
 
 		components: {
 			NumberField,
+			TextField,
 			ToggleField,
 			SelectField,
 		}

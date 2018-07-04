@@ -1,4 +1,4 @@
-function generateScript() {
+function generateScript({name}) {
 	return `
 #!/usr/bin/env bash
 
@@ -7,11 +7,13 @@ set -o errexit
 REL_DIR="\`dirname \\"$0\\"\`"
 DIR=\`readlink -e $REL_DIR\`
 
+LOG_FILE="/tmp/${name}.log"
+
 WORDS=()
 
 usage() {
 	cat <<END
-Simple script to echo a list of words
+${name}: A simple script to echo a list of words
 
 Usage:
   $(basename "$0") [-h|--help] <word1> <word2>...
@@ -22,8 +24,18 @@ Switches:
 END
 }
 
+log() {
+	echo "$@"
+	echo "> $@" >> "$LOG_FILE"
+}
+
+error() {
+  echo "ERROR: $@" >&2
+  echo "ERROR: $@" >> "$LOG_FILE"
+}
+
 fatal() {
-	echo "ERROR: $@" >&2
+	error $*
 	exit 1
 }
 
@@ -32,15 +44,17 @@ parse_args() {
 		if [[ "\${arg:0:1}" != '-' ]]; then
 			WORDS+=($arg)
 		elif [[ "$arg" = '-h' || "$arg" = '--help' ]]; then
-			usage "$*"
+			usage
 			exit 0
 		else
-			fatal "Invalid argument: '$arg'"
+			fatal "Invalid argument: '$arg'."
 		fi
 	done
 }
 
 main() {
+  echo -e "Executed at $(date)\\n----------------------------" > "$LOG_FILE"
+
 	parse_args "$*"
 	
 	for word in "\${WORDS[@]}"; do
@@ -48,13 +62,22 @@ main() {
 	done
 }
 
-main "$*"
+main $*
 	`.trim();
 }
 
 export default {
 	title: 'Bash script',
 	description: `Bash script with a few basic amenities and command line parsing`,
+  
+  options: [
+    {
+      key: 'name',
+      label: 'Script name',
+      type: 'Text',
+      default: 'my-script'
+    },
+  ],
 	
 	blocks: [
 		{
