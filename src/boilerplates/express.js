@@ -7,11 +7,11 @@ const TEMPLATES = {
 function generateMain({port, cors, templates, staticFiles}) {
 	const imports = [
 		`const http = require('http');`,
-		`const libPath = require('path');`,
+    staticFiles && `const libPath = require('path');`,
 		'',
 		`const express = require('express');`,
 		`const bodyParser = require('body-parser');`,
-	];
+	].filter(Boolean);
 	
 	const options = [
 		`const port = process.env.PORT || ${port};`
