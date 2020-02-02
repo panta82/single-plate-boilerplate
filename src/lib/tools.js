@@ -1,13 +1,15 @@
 export const generateBlockData = (boilerplate, options) => {
-	return boilerplate.blocks.map((block) => {
+	return boilerplate.blocks.map(block => {
 		return {
 			...block,
-			code: block.code(options)
+			instructions:
+				typeof block.instructions === 'function' ? block.instructions(options) : block.instructions,
+			code: typeof block.code === 'function' ? block.code(options) : block.code,
 		};
 	});
 };
 
-export const generateDefaultOptions = (boilerplate) => {
+export const generateDefaultOptions = boilerplate => {
 	const result = {};
 	if (!boilerplate.options) {
 		return result;
