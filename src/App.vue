@@ -1,5 +1,5 @@
 <template>
-	<div id="App">
+	<div id="App" v-bind:style="appStyle">
 		<Layout>
 			<template slot="left">
 				<Sidebar
@@ -30,12 +30,24 @@ const boilerplates = loadBoilerplates();
 
 export default {
 	name: 'App',
+
 	data() {
 		return {
+			color: 260,
 			boilerplates,
 			boilerplate: null,
 			options: null,
 		};
+	},
+
+	mounted() {
+		this.colorInterval = setInterval(() => {
+			this.color = this.color < 360 ? this.color + 1 : 0;
+		}, 300);
+	},
+
+	beforeDestroy() {
+		clearInterval(this.colorInterval);
 	},
 
 	components: {
@@ -43,6 +55,7 @@ export default {
 		Content,
 		Sidebar,
 	},
+
 	computed: {
 		blocks() {
 			if (!this.boilerplate || !this.options) {
@@ -50,6 +63,11 @@ export default {
 			}
 
 			return generateBlockData(this.boilerplate, this.options);
+		},
+		appStyle() {
+			return {
+				'--primary': `hsl(${this.color}, 80%, 30%)`,
+			};
 		},
 	},
 };

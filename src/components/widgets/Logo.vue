@@ -10,45 +10,35 @@
 .Logo {
 	color: var(--primary);
 	text-transform: uppercase;
+	font-family: Teko, sans-serif;
 	font-weight: bold;
-	margin: 10px;
+	width: calc(100% + 20px);
+	margin-left: -10px;
 	cursor: default;
-	text-align: center;
 }
 
 .Logo > * {
-	margin: -10px;
+	position: relative;
 	padding: 0;
-	text-shadow: -5px -5px 15px white;
-	animation-name: glow;
-	animation-duration: 3s;
-	animation-direction: alternate;
-	animation-iteration-count: infinite;
+	margin: 0;
+	text-align: center;
+	/*-webkit-text-stroke-width: 2px;*/
+	/*-webkit-text-stroke-color: var(--primary);*/
+	/*-webkit-text-stroke-color: rgba(255, 255, 255, 0.5);*/
 }
 
 .Logo > :nth-child(1) {
-	font-size: 71px;
-	line-height: 60px;
+	font-size: 85px;
+	line-height: 70px;
 }
 
 .Logo > :nth-child(2) {
-	font-size: 84px;
-	line-height: 80px;
-	animation-delay: 1s;
+	font-size: 97px;
+	line-height: 60px;
 }
 
 .Logo > :nth-child(3) {
-	font-size: 38px;
-	line-height: 38px;
-	animation-delay: 2s;
-}
-
-@keyframes glow {
-	from {
-		text-shadow: -5px -5px 15px white;
-	}
-	to {
-		text-shadow: 5px 5px 15px white;
-	}
+	font-size: 45px;
+	line-height: 35px;
 }
 </style>
