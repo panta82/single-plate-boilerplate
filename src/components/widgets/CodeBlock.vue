@@ -22,7 +22,7 @@
 					class="preview-html"
 					v-if="language === 'html'"
 					:srcdoc="code"
-					sandbox=""
+					sandbox="allow-scripts"
 					src="about:blank"
 				>
 				</iframe>

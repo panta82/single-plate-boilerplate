@@ -1,25 +1,6 @@
-export const generateBlockData = (boilerplate, options) => {
-	return boilerplate.blocks.map(block => {
-		return {
-			...block,
-			instructions:
-				typeof block.instructions === 'function' ? block.instructions(options) : block.instructions,
-			code: typeof block.code === 'function' ? block.code(options) : block.code,
-		};
-	});
-};
-
-export const generateDefaultOptions = boilerplate => {
-	const result = {};
-	if (!boilerplate.options) {
-		return result;
-	}
-	boilerplate.options.forEach(option => {
-		result[option.key] = option.default;
-	});
-	return result;
-};
-
+/**
+ * @return {Array<Boilerplate>}
+ */
 export const loadBoilerplates = () => {
 	const boilerplates = [];
 	const r = require.context('../boilerplates', false, /\.js$/);
@@ -30,3 +11,14 @@ export const loadBoilerplates = () => {
 	});
 	return boilerplates;
 };
+
+export function caster(Type) {
+	return item => (item instanceof Type ? item : new Type(item));
+}
+
+export function functionize(val) {
+	if (typeof val === 'function') {
+		return val;
+	}
+	return () => val;
+}

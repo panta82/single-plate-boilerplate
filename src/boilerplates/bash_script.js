@@ -1,4 +1,6 @@
-function generateScript({name}) {
+import { Boilerplate, FIELD_TYPES } from '../lib/types';
+
+function generateScript({ name }) {
 	return `
 #!/usr/bin/env bash
 
@@ -66,24 +68,24 @@ main $*
 	`.trim();
 }
 
-export default {
+export default new Boilerplate({
 	title: 'Bash script',
 	description: `Bash script with a few basic amenities and command line parsing`,
-  
-  options: [
-    {
-      key: 'name',
-      label: 'Script name',
-      type: 'Text',
-      default: 'my-script'
-    },
-  ],
-	
+
+	fields: [
+		{
+			key: 'name',
+			label: 'Script name',
+			type: FIELD_TYPES.TEXT,
+			default: 'my-script',
+		},
+	],
+
 	blocks: [
 		{
 			language: 'bash',
 			instructions: `Add this to your bash script. Don't forget to make it executable`,
-			code: generateScript
-		}
-	]
-};
+			code: generateScript,
+		},
+	],
+});

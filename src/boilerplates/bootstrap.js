@@ -1,10 +1,13 @@
+import { Boilerplate, FIELD_TYPES } from '../lib/types';
+
 function prependLines(targetStr, withStr) {
-	return targetStr.split(/\n\r|\r\n|\r|\n/g)
-		.map(str => str ? withStr + str : str)
+	return targetStr
+		.split(/\n\r|\r\n|\r|\n/g)
+		.map(str => (str ? withStr + str : str))
 		.join('\n');
 }
 
-function generateHTML({favicon, navbarDark, navbarContainer, jumbotron, form}) {
+function generateHTML({ favicon, navbarDark, navbarContainer, jumbotron, form }) {
 	let navbarHTML = `
 			<a class="navbar-brand" href="#">Navbar</a>
 			<button class="navbar-toggler" type="button"
@@ -44,13 +47,14 @@ function generateHTML({favicon, navbarDark, navbarContainer, jumbotron, form}) {
 				</form>
 			</div>
 `;
-	
+
 	if (navbarContainer) {
-		navbarHTML = `\n			<div class="container d-flex justify-content-between">`
-			+ prependLines(navbarHTML, '\t')
-			+ `			</div>\n`;
+		navbarHTML =
+			`\n			<div class="container d-flex justify-content-between">` +
+			prependLines(navbarHTML, '\t') +
+			`			</div>\n`;
 	}
-	
+
 	let jumbotronHTML = '';
 	if (jumbotron) {
 		jumbotronHTML = `
@@ -63,7 +67,7 @@ function generateHTML({favicon, navbarDark, navbarContainer, jumbotron, form}) {
 		</div>
 `;
 	}
-	
+
 	let formHTML = '';
 	if (form) {
 		formHTML = `
@@ -120,7 +124,7 @@ function generateHTML({favicon, navbarDark, navbarContainer, jumbotron, form}) {
 			</form>
 `;
 	}
-	
+
 	return `
 <!doctype html>
 <html lang="en">
@@ -144,7 +148,9 @@ ${favicon ? `		<link rel="icon" href="favicon.ico">\n` : ''}
 
 	<body>
 		
-		<nav class="navbar navbar-expand-md ${navbarDark ? 'navbar-dark bg-dark' : 'navbar-light bg-light'}">
+		<nav class="navbar navbar-expand-md ${
+			navbarDark ? 'navbar-dark bg-dark' : 'navbar-light bg-light'
+		}">
 ${navbarHTML}
 		</nav>
 ${jumbotronHTML}
@@ -173,52 +179,52 @@ ${formHTML}
 				crossorigin="anonymous"></script>
 	</body>
 </html>
-	`.trim()
+	`.trim();
 }
 
-export default {
+export default new Boilerplate({
 	title: 'Bootstrap page',
 	description: `Bootstrap 4.x starter template with navbar. Assets are drawn from CDN-s.`,
-	
-	options: [
+
+	fields: [
 		{
 			key: 'favicon',
 			label: 'Favicon',
-			type: 'Toggle',
-			default: true
+			type: FIELD_TYPES.TOGGLE,
+			default: true,
 		},
 		{
 			key: 'navbarDark',
 			label: 'Dark navbar',
-			type: 'Toggle',
-			default: false
+			type: FIELD_TYPES.TOGGLE,
+			default: false,
 		},
 		{
 			key: 'navbarContainer',
 			label: 'Navbar container',
-			type: 'Toggle',
-			default: true
+			type: FIELD_TYPES.TOGGLE,
+			default: true,
 		},
 		{
 			key: 'jumbotron',
 			label: 'Jumbotron',
-			type: 'Toggle',
-			default: false
+			type: FIELD_TYPES.TOGGLE,
+			default: false,
 		},
 		{
 			key: 'form',
 			label: 'Form example',
-			type: 'Toggle',
-			default: false
+			type: FIELD_TYPES.TOGGLE,
+			default: false,
 		},
 	],
-	
+
 	blocks: [
 		{
 			title: null,
 			language: 'html',
 			instructions: 'Paste this into your HTML file',
-			code: generateHTML
+			code: generateHTML,
 		},
-	]
-};
+	],
+});

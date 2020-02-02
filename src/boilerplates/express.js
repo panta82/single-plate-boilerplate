@@ -1,41 +1,39 @@
+import { Boilerplate, FIELD_TYPES } from '../lib/types';
+
 const TEMPLATES = {
 	none: 'none',
 	ejs: 'ejs',
-	pug: 'pug'
+	pug: 'pug',
 };
 
-function generateMain({port, cors, templates, staticFiles}) {
+function generateMain({ port, cors, templates, staticFiles }) {
 	const imports = [
 		`const http = require('http');`,
-    staticFiles && `const libPath = require('path');`,
+		staticFiles && `const libPath = require('path');`,
 		'',
 		`const express = require('express');`,
 		`const bodyParser = require('body-parser');`,
 	].filter(Boolean);
-	
-	const options = [
-		`const port = process.env.PORT || ${port};`
-	];
-	
-	const appSetup = [
-		`const app = express();`,
-		`app.use(bodyParser.json());`
-	];
-	
+
+	const options = [`const port = process.env.PORT || ${port};`];
+
+	const appSetup = [`const app = express();`, `app.use(bodyParser.json());`];
+
 	const handlers = [];
-	
+
 	if (templates !== TEMPLATES.none) {
-		handlers.push(`
+		handlers.push(
+			`
 app.get('/', (req, res, next) => {
 	res.render('index');
 });
-		`.trim());
+		`.trim()
+		);
 	}
-	
-	const apiEndpoint = templates !== TEMPLATES.none || staticFiles
-		? '/api/v1/hello'
-		: '/';
-	handlers.push(`
+
+	const apiEndpoint = templates !== TEMPLATES.none || staticFiles ? '/api/v1/hello' : '/';
+	handlers.push(
+		`
 app.get('${apiEndpoint}', (req, res, next) => {
 	res.send({
 		result: 'Hello, ' + (req.query.word || 'world')
@@ -43,21 +41,21 @@ app.get('${apiEndpoint}', (req, res, next) => {
 });
 		`.trim()
 	);
-	
+
 	const footer = [
 		`
 const server = http.createServer(app);
 server.listen(port, () => {
 	console.log(\`Listening on http://localhost:\${port}\`);
 });
-		`.trim()
+		`.trim(),
 	];
-	
+
 	if (cors) {
 		imports.push(`const cors = require('cors');`);
 		appSetup.push(`app.use(cors());`);
 	}
-	
+
 	let tmpl;
 	switch (templates) {
 		case TEMPLATES.ejs:
@@ -70,89 +68,85 @@ server.listen(port, () => {
 	if (tmpl) {
 		appSetup.push(tmpl);
 	}
-	
+
 	if (staticFiles) {
 		appSetup.push(`\napp.use(express.static(libPath.resolve(__dirname, './public')));`);
 	}
-	
+
 	return [
 		imports.join('\n'),
 		options.join('\n'),
 		appSetup.join('\n'),
 		handlers.join('\n\n'),
-		footer.join('\n')
+		footer.join('\n'),
 	].join('\n\n');
 }
 
-function generateBash({cors, templates}) {
-	const modules = [
-		'express',
-		'body-parser'
-	];
-	
+function generateBash({ cors, templates }) {
+	const modules = ['express', 'body-parser'];
+
 	if (cors) {
 		modules.push('cors');
 	}
-	
+
 	if (templates === TEMPLATES.pug) {
 		modules.push('pug');
-	}
-	else if (templates === TEMPLATES.ejs) {
+	} else if (templates === TEMPLATES.ejs) {
 		modules.push('ejs');
 	}
-	
+
 	return `npm install --save ${modules.join(' ')}`;
 }
 
-export default {
+export default new Boilerplate({
 	title: 'Express.js app',
 	description: `Single file node.js app with express server and a few standard features`,
-	
-	options: [
+
+	fields: [
 		{
 			key: 'port',
 			label: 'Default port',
-			type: 'Number',
-			default: 3000
+			type: FIELD_TYPES.NUMBER,
+			default: 3000,
 		},
 		{
 			key: 'templates',
 			label: 'Template support',
-			type: 'Select',
+			type: FIELD_TYPES.SELECT,
 			options: [
-				{value: TEMPLATES.none, title: 'None'},
-				{value: TEMPLATES.ejs, title: 'EJS'},
-				{value: TEMPLATES.pug, title: 'Pug'},
+				{ value: TEMPLATES.none, title: 'None' },
+				{ value: TEMPLATES.ejs, title: 'EJS' },
+				{ value: TEMPLATES.pug, title: 'Pug' },
 			],
-			default: TEMPLATES.none
+			default: TEMPLATES.none,
 		},
 		{
 			key: 'cors',
 			label: 'CORS?',
-			type: 'Toggle',
-			default: true
+			type: FIELD_TYPES.TOGGLE,
+			default: true,
 		},
 		{
 			key: 'staticFiles',
 			label: 'Static files',
-			type: 'Toggle',
-			default: false
-		}
+			type: FIELD_TYPES.TOGGLE,
+			default: false,
+		},
 	],
-	
+
 	blocks: [
 		{
 			title: null,
 			language: 'javascript',
 			instructions: 'Copy/paste this into your main code file',
-			code: generateMain
+			code: generateMain,
 		},
-		
+
 		{
 			title: null,
 			language: 'bash',
 			instructions: 'Execute this in your terminal',
-			code: generateBash
-		}
-	]
-};
+			code: generateBash,
+		},
+	],
+});

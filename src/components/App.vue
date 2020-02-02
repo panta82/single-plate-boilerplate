@@ -20,11 +20,11 @@
 </template>
 
 <script>
-import Layout from './components/Layout.vue';
-import Sidebar from './components/Sidebar.vue';
-import Content from './components/Content.vue';
+import Layout from './Layout.vue';
+import Sidebar from './Sidebar.vue';
+import Content from './Content.vue';
 
-import { generateBlockData, loadBoilerplates } from './lib/tools';
+import { loadBoilerplates } from '../lib/tools';
 
 const boilerplates = loadBoilerplates();
 
@@ -33,10 +33,14 @@ export default {
 
 	data() {
 		return {
-			color: 260,
-			boilerplates,
-			boilerplate: null,
+			color: Math.floor(Math.random() * 360),
 			options: null,
+
+			/** @type {Boilerplate[]} */
+			boilerplates,
+
+			/** @type {Boilerplate} */
+			boilerplate: null,
 		};
 	},
 
@@ -62,7 +66,7 @@ export default {
 				return null;
 			}
 
-			return generateBlockData(this.boilerplate, this.options);
+			return this.boilerplate.generateBlockData(this.options);
 		},
 		appStyle() {
 			return {
@@ -75,8 +79,8 @@ export default {
 
 <style>
 @import url('https://fonts.googleapis.com/css?family=Fira+Sans:500,700');
-@import '~highlight.js/styles/ir-black.css';
-@import 'styles/variables.css';
-@import 'styles/global.css';
-@import 'styles/fields.css';
+@import '../../node_modules/highlight.js/styles/ir-black.css';
+@import '../styles/variables.css';
+@import '../styles/global.css';
+@import '../styles/fields.css';
 </style>
