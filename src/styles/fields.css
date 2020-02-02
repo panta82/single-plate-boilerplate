@@ -10,8 +10,8 @@
 
 /* TEXT *****************************************************************************/
 
-.field input[type=text],
-.field input[type=number] {
+.field input[type='text'],
+.field input[type='number'] {
 	display: block;
 	width: 100%;
 	border: 2px solid #5a5a5a;
@@ -21,12 +21,12 @@
 	transition: all 0.3s;
 }
 
-.field input[type=text]:focus,
-.field input[type=number]:focus,
-.field input[type=text]:active,
-.field input[type=number]:active {
+.field input[type='text']:focus,
+.field input[type='number']:focus,
+.field input[type='text']:active,
+.field input[type='number']:active {
 	background: white;
-	border-color: #7828ee;
+	border-color: var(--primary);
 	outline: none;
 }
 
@@ -45,7 +45,7 @@
 }
 
 .field .v-select.open .dropdown-toggle {
-	border-color: #7828ee;
+	border-color: var(--primary);
 	background-color: white;
 }
 
@@ -67,7 +67,7 @@
 }
 
 .field .v-select .dropdown-menu {
-	border: 2px solid #7828ee;
+	border: 2px solid var(--primary);
 	border-radius: 0;
 	border-top: none;
 	margin-top: -2px;
@@ -79,5 +79,5 @@
 	text-overflow: ellipsis;
 }
 .field .v-select .dropdown-menu li.highlight a {
-	background-color: #7828ee;
+	background-color: var(--primary);
 }

@@ -9,7 +9,11 @@
 				<div v-bind:class="['code', copied && 'copied']">
 					<pre v-highlightjs="code"><code v-bind:class="[language]"></code></pre>
 					<button type="button"
-							class="copy"
+							class="copy top"
+							@click="copyToClipboard">COPY
+					</button>
+					<button type="button"
+							class="copy bottom"
 							@click="copyToClipboard">COPY
 					</button>
 				</div>
@@ -126,9 +130,7 @@
 	.copy {
 		position: absolute;
 		opacity: 0.7;
-		bottom: 0;
-		right: 0;
-		background: #7828ee;
+		background: var(--primary);
 		color: white;
 		cursor: pointer;
 		transition: all 0.3s;
@@ -137,7 +139,14 @@
 		padding: 4px;
 		border: none;
 	}
-
+	.copy.top {
+		top: 0;
+		right: 0;
+	}
+	.copy.bottom {
+		bottom: 0;
+		right: 0;
+	}
 	.copy:hover {
 		opacity: 1;
 	}
