@@ -24,6 +24,54 @@ function httpsPrivKeyPath({ name, letsEncrypt }) {
 		: `ssl_certificate /root/${mainName(name)}.key`;
 }
 
+function generateSecurity(enabled, headers, https) {
+	if (!enabled) {
+		return '';
+	}
+
+	return `
+	## Do not display server info in responses
+	server_tokens off;
+	
+	${
+		headers
+			? `
+	## Security headers
+	add_header X-Frame-Options "SAMEORIGIN" always;
+	add_header X-XSS-Protection "1; mode=block" always;
+	add_header X-Content-Type-Options "nosniff" always;
+	add_header Referrer-Policy "no-referrer-when-downgrade" always;
+	add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 'unsafe-inline'" always;
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always; `
+			: ''
+	}
+	
+	${
+		https
+			? `
+	## SSL security
+	ssl_session_timeout 1d;
+	ssl_session_cache shared:SSL:10m;
+	ssl_session_tickets off;
+	
+	## Diffie-Hellman parameter for DHE ciphersuites
+	ssl_dhparam /etc/nginx/dhparam.pem;
+
+	## Mozilla Intermediate configuration
+	ssl_protocols TLSv1.2 TLSv1.3;
+	ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+
+	## OCSP Stapling
+	ssl_stapling on;
+	ssl_stapling_verify on;
+	resolver 1.1.1.1 1.0.0.1 8.8.8.8 8.8.4.4 208.67.222.222 208.67.220.220 valid=60s;
+	resolver_timeout 2s;
+	`
+			: ''
+	}
+	`;
+}
+
 function generateResponse({ name }) {
 	return `
 	## Increase max body size, to prevent strange errors
@@ -51,7 +99,7 @@ function generateResponse({ name }) {
 `;
 }
 
-function generateHttps({ name, aliases, letsEncrypt, strictHttpsSecurity }) {
+function generateHttps({ name, letsEncrypt, strictSecurity }) {
 	return `
 ## HTTPS
 server {
@@ -63,36 +111,19 @@ server {
 	## SSL Certificate
 	ssl_certificate ${httpsCertPath({ name, letsEncrypt })};
 	ssl_certificate_key ${httpsPrivKeyPath({ name, letsEncrypt })};
-
-	${
-		strictHttpsSecurity
-			? `## Strict HTTPS security
-	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;";
-	add_header X-Content-Type-Options nosniff;
-	add_header X-Frame-Options "SAMEORIGIN";
-	add_header X-XSS-Protection "1; mode=block";
-	add_header X-Robots-Tag none;`
-			: ''
-	}
+	
+	${generateSecurity(strictSecurity, true, true)}
 	
 	${generateResponse({ name })}
 }
 `;
 }
 
-function generateConfig({
-	name,
-	customLogs,
-	https,
-	letsEncrypt,
-	httpRedirect,
-	strictHttpsSecurity,
-}) {
+function generateHttp({ name, customLogs, https, letsEncrypt, httpRedirect, strictSecurity }) {
 	return `
 server {
 	listen 80;
 	server_name ${name};
-	server_tokens off;
 
 	${
 		customLogs
@@ -101,6 +132,8 @@ server {
 	error_log   /var/log/nginx/${tokenizedName(name)}_error.log;`
 			: ''
 	}
+	
+	${generateSecurity(strictSecurity, !https || !httpRedirect, false)}
 
 	${
 		https && letsEncrypt
@@ -121,9 +154,14 @@ server {
 	`
 			: generateResponse({ name })
 	}
+}`;
 }
 
-${https ? generateHttps({ name, letsEncrypt, strictHttpsSecurity }) : ''}
+function generateConfig(options) {
+	return `
+${generateHttp(options)}
+
+${options.https ? generateHttps(options) : ''}
 `;
 }
 
@@ -142,6 +180,11 @@ export default new Boilerplate({
 		{
 			key: 'customLogs',
 			label: 'Custom logs?',
+			type: FIELD_TYPES.TOGGLE,
+		},
+		{
+			key: 'strictSecurity',
+			label: 'Strict security?',
 			type: FIELD_TYPES.TOGGLE,
 		},
 		{
