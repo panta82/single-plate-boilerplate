@@ -77,7 +77,7 @@ export default new Boilerplate({
 			key: 'name',
 			label: 'Script name',
 			type: FIELD_TYPES.TEXT,
-			default: 'my-script',
+			defaultValue: 'my-script',
 		},
 	],
 

@@ -45,9 +45,10 @@ export default {
 	},
 
 	mounted() {
-		this.colorInterval = setInterval(() => {
-			this.color = this.color < 360 ? this.color + 1 : 0;
-		}, 300);
+		// TODO: Uncomment
+		// this.colorInterval = setInterval(() => {
+		// 	this.color = this.color < 360 ? this.color + 1 : 0;
+		// }, 300);
 	},
 
 	beforeDestroy() {

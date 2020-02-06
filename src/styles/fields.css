@@ -81,3 +81,11 @@
 .field .v-select .dropdown-menu li.highlight a {
 	background-color: var(--primary);
 }
+.field .field-help-text {
+	color: rgba(0, 0, 0, 0.4);
+	font-size: 12px;
+	font-weight: normal;
+	margin-top: 4px;
+	margin-left: 4px;
+	margin-right: 4px;
+}

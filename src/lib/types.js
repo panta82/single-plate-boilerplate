@@ -28,6 +28,12 @@ export class Boilerplate {
 			fields: ((source && source.fields) || []).map(caster(BoilerplateField)),
 			blocks: ((source && source.blocks) || []).map(caster(BoilerplateBlock)),
 		});
+
+		/** @type {Object.<string, BoilerplateBlock>} */
+		this.fieldLookup = this.fields.reduce((lookup, field) => {
+			lookup[field.key] = field;
+			return lookup;
+		}, {});
 	}
 
 	generateDefaultOptions() {
@@ -36,7 +42,7 @@ export class Boilerplate {
 			return result;
 		}
 		this.fields.forEach(field => {
-			result[field.key] = field.default || undefined;
+			result[field.key] = field.defaultValue || undefined;
 		});
 		return result;
 	}
@@ -78,6 +84,12 @@ export class BoilerplateField {
 		this.label = undefined;
 
 		/**
+		 * Optional explanation to be written underneath some fields
+		 * @type {string}
+		 */
+		this.helpText = undefined;
+
+		/**
 		 * In case htis is SELECT
 		 * @type {Array<{value, title}>}
 		 */
@@ -86,7 +98,18 @@ export class BoilerplateField {
 		/**
 		 * Default value
 		 */
-		this.default = undefined;
+		this.defaultValue = undefined;
+
+		/**
+		 * Value to use if nothing is entered
+		 */
+		this.exampleValue = undefined;
+
+		/**
+		 * Optional function, to determine when the field should be displayed
+		 * @type {function(options, boilerplate)}
+		 */
+		this.displayIf = undefined;
 
 		Object.assign(this, source);
 		this.options = this.options || [];

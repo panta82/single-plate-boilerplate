@@ -92,7 +92,8 @@ export default {
 	background-color: #a5a8a8;
 	text-transform: uppercase;
 	display: inline-block;
-	padding: 5px;
+	padding: 2px 5px;
+	font-size: 14px;
 	font-weight: bold;
 }
 

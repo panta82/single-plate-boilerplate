@@ -3,6 +3,7 @@
 		v-if="field.type === 'NUMBER'"
 		:label="field.label"
 		:value="value"
+		:help-text="field.helpText"
 		@input="$emit('input', $event)"
 	/>
 
@@ -10,6 +11,7 @@
 		v-else-if="field.type === 'TEXT'"
 		:label="field.label"
 		:value="value"
+		:help-text="field.helpText"
 		@input="$emit('input', $event)"
 	/>
 
@@ -25,7 +27,8 @@
 		:label="field.label"
 		:value="value"
 		:options="field.options"
-		:default="field.default"
+		:defaultValue="field.defaultValue"
+		:help-text="field.helpText"
 		@input="$emit('input', $event)"
 	/>
 

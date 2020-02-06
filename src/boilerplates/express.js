@@ -107,7 +107,7 @@ export default new Boilerplate({
 			key: 'port',
 			label: 'Default port',
 			type: FIELD_TYPES.NUMBER,
-			default: 3000,
+			defaultValue: 3000,
 		},
 		{
 			key: 'templates',
@@ -118,19 +118,19 @@ export default new Boilerplate({
 				{ value: TEMPLATES.ejs, title: 'EJS' },
 				{ value: TEMPLATES.pug, title: 'Pug' },
 			],
-			default: TEMPLATES.none,
+			defaultValue: TEMPLATES.none,
 		},
 		{
 			key: 'cors',
 			label: 'CORS?',
 			type: FIELD_TYPES.TOGGLE,
-			default: true,
+			defaultValue: true,
 		},
 		{
 			key: 'staticFiles',
 			label: 'Static files',
 			type: FIELD_TYPES.TOGGLE,
-			default: false,
+			defaultValue: false,
 		},
 	],
 

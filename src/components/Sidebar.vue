@@ -4,12 +4,8 @@
 
 		<BoilerplateSelect :boilerplates="boilerplates" v-model="boilerplate" />
 
-		<div v-if="boilerplate && options">
-			<FieldAdapter
-				v-for="field in boilerplate.fields"
-				:field="field"
-				v-model="options[field.key]"
-			/>
+		<div v-if="enabledFields && options">
+			<FieldAdapter v-for="field in enabledFields" :field="field" v-model="options[field.key]" />
 		</div>
 
 		<ArrowIcon v-if="!boilerplate" />
@@ -33,16 +29,14 @@ export default {
 		};
 	},
 	computed: {
-		enabledOptions: function() {
-			// if (!this.options) {
-			// 	return null;
-			// }
-			// return this.options.filter(option => {
-			// 	if (!option.condition) {
-			// 		return true;
-			// 	}
-			// 	return option.condition();
-			// });
+		/** @return {BoilerplateField[]} */
+		enabledFields: function() {
+			if (!this.options || !this.boilerplate) {
+				return null;
+			}
+			return this.boilerplate.fields.filter(field => {
+				return !field.displayIf || field.displayIf(this.options, this.boilerplate);
+			});
 		},
 	},
 	watch: {
@@ -51,7 +45,20 @@ export default {
 				if (this.boilerplate) {
 					this.$store.put('options.' + this.boilerplate.id, options);
 				}
-				this.$emit('options', options);
+				const displayOptions = {};
+				for (const key in options) {
+					if (options.hasOwnProperty(key)) {
+						const field = this.boilerplate.fieldLookup[key];
+						if (field) {
+							if (!options[key] && field.exampleValue) {
+								displayOptions[key] = field.exampleValue;
+							} else {
+								displayOptions[key] = options[key];
+							}
+						}
+					}
+				}
+				this.$emit('options', displayOptions);
 			},
 			deep: true,
 		},
