@@ -9,11 +9,7 @@
 				/>
 			</template>
 			<template slot="right">
-				<Content
-					:title="boilerplate && boilerplate.title"
-					:description="boilerplate && boilerplate.description"
-					:blocks="blocks"
-				/>
+				<Content :boilerplate="boilerplate" :options="options" />
 			</template>
 		</Layout>
 	</div>
@@ -62,13 +58,6 @@ export default {
 	},
 
 	computed: {
-		blocks() {
-			if (!this.boilerplate || !this.options) {
-				return null;
-			}
-
-			return this.boilerplate.generateBlockData(this.options);
-		},
 		appStyle() {
 			return {
 				'--primary': `hsl(${this.color}, 80%, 30%)`,

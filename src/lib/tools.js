@@ -22,3 +22,27 @@ export function functionize(val) {
 	}
 	return () => val;
 }
+
+export function normalizeCode(code) {
+	const lines = code.trim().split('\n');
+	const resultLines = [];
+
+	let prevEmpty = false;
+	for (let line of lines) {
+		line = line.trimRight();
+
+		// Make empty lines at most 2 one after another
+		if (!line.trim()) {
+			if (prevEmpty) {
+				continue;
+			}
+			prevEmpty = true;
+		} else {
+			prevEmpty = false;
+		}
+
+		resultLines.push(line);
+	}
+
+	return resultLines.join('\n');
+}

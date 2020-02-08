@@ -7,7 +7,9 @@
 					<div class="title">{{ title }}</div>
 				</div>
 				<div v-bind:class="['code', copied && 'copied']">
-					<pre v-highlightjs="code"><code v-bind:class="[language]"></code></pre>
+					<pre
+						v-highlightjs="code"
+					><code v-bind:class="[language, wrap ? 'wrap' : '']"></code></pre>
 					<button v-if="showTopCopyButton" type="button" class="copy top" @click="copyToClipboard">
 						COPY
 					</button>
@@ -44,7 +46,7 @@ export default {
 			copied: false,
 		};
 	},
-	props: ['code', 'language', 'title', 'instructions'],
+	props: ['code', 'language', 'title', 'instructions', 'wrap'],
 	computed: {
 		enablePreview() {
 			return PREVIEW_LANGUAGES[this.language];
@@ -128,6 +130,10 @@ export default {
 .code.copied code {
 	transition: background-color 0s;
 	background: #748899;
+}
+
+.code .wrap {
+	white-space: normal;
 }
 
 .copy {

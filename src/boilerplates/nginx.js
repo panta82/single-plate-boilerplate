@@ -1,4 +1,11 @@
 import { Boilerplate, FIELD_TYPES } from '../lib/types';
+import { normalizeCode } from '../lib/tools';
+
+const NGINX_SERVER_TYPES = {
+	none: 'none',
+	proxy: 'proxy',
+	static: 'static',
+};
 
 function mainName(name) {
 	return (name || '').split(' ')[0];
@@ -10,18 +17,6 @@ function tokenizedName(name) {
 
 function confFileName(name) {
 	return name ? tokenizedName(name) + '.nginx' : '';
-}
-
-function httpsCertPath({ name, letsEncrypt }) {
-	return letsEncrypt
-		? `/etc/letsencrypt/live/${mainName(name)}/fullchain.pem`
-		: `ssl_certificate /root/${mainName(name)}.cert`;
-}
-
-function httpsPrivKeyPath({ name, letsEncrypt }) {
-	return letsEncrypt
-		? `/etc/letsencrypt/live/${mainName(name)}/privkey.pem`
-		: `ssl_certificate /root/${mainName(name)}.key`;
 }
 
 function generateSecurity(enabled, headers, https) {
@@ -55,7 +50,8 @@ function generateSecurity(enabled, headers, https) {
 	ssl_session_tickets off;
 	
 	## Diffie-Hellman parameter for DHE ciphersuites
-	ssl_dhparam /etc/nginx/dhparam.pem;
+	## NOTE: To generate, run: openssl dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096
+	## ssl_dhparam /etc/nginx/dhparam.pem;
 
 	## Mozilla Intermediate configuration
 	ssl_protocols TLSv1.2 TLSv1.3;
@@ -72,18 +68,11 @@ function generateSecurity(enabled, headers, https) {
 	`;
 }
 
-function generateResponse({ name }) {
+function generateProxyResponse({ proxyBackend }) {
 	return `
-	## Increase max body size, to prevent strange errors
-	client_max_body_size 200M;
-
-	## Prevent problems with JWT token size
-	large_client_header_buffers 8 64k;
-	proxy_buffers         8 32k;  # Buffer pool = 8 buffers of 16k
-	proxy_buffer_size     32k;    # 16k of buffers from pool used for headers
-
+	## Proxy pass
 	location / {
-		proxy_pass http://backend/;
+		proxy_pass ${proxyBackend};
 		proxy_http_version 1.1;
 		proxy_set_header Upgrade $http_upgrade;
 		proxy_set_header Connection "upgrade";
@@ -95,31 +84,60 @@ function generateResponse({ name }) {
 		proxy_set_header X-Nginx-Proxy true;
 
 		proxy_redirect off;
-	}
-`;
+	}`;
 }
 
-function generateHttps({ name, letsEncrypt, strictSecurity }) {
+function generateResponse({ serverType, proxyBackend }) {
+	const responseDef =
+		serverType === NGINX_SERVER_TYPES.proxy ? generateProxyResponse({ proxyBackend }) : '';
+
+	return (
+		`
+	## Increase max body size, to prevent strange errors
+	client_max_body_size 200M;
+
+	## Prevent problems with JWT token size
+	large_client_header_buffers 8 64k;
+	proxy_buffers               8 32k;
+	proxy_buffer_size             32k;
+` + responseDef
+	);
+}
+
+function generateHttps({ name, letsEncrypt, strictSecurity, ...options }) {
 	return `
 ## HTTPS
 server {
 	listen 443 ssl;
 
 	## Server name
-  server_name ${name};
+	server_name ${name};
 
 	## SSL Certificate
-	ssl_certificate ${httpsCertPath({ name, letsEncrypt })};
-	ssl_certificate_key ${httpsPrivKeyPath({ name, letsEncrypt })};
+	${
+		letsEncrypt
+			? `ssl_certificate /etc/letsencrypt/live/${mainName(name)}/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/${mainName(name)}/privkey.pem;`
+			: `ssl_certificate /root/${mainName(name)}.cert;
+	ssl_certificate_key /root/${mainName(name)}.key;`
+	}
 	
 	${generateSecurity(strictSecurity, true, true)}
 	
-	${generateResponse({ name })}
+	${generateResponse(options)}
 }
 `;
 }
 
-function generateHttp({ name, customLogs, https, letsEncrypt, httpRedirect, strictSecurity }) {
+function generateHttp({
+	name,
+	customLogs,
+	https,
+	letsEncrypt,
+	httpRedirect,
+	strictSecurity,
+	...options
+}) {
 	return `
 server {
 	listen 80;
@@ -128,8 +146,8 @@ server {
 	${
 		customLogs
 			? `## Customized log files
-	access_log  /var/log/nginx/${tokenizedName(name)}_access.log;
-	error_log   /var/log/nginx/${tokenizedName(name)}_error.log;`
+	access_log /var/log/nginx/${tokenizedName(name)}_access.log;
+	error_log  /var/log/nginx/${tokenizedName(name)}_error.log;`
 			: ''
 	}
 	
@@ -140,7 +158,7 @@ server {
 			? `## Lets encrypt handler
 	location '/.well-known/acme-challenge' {
 		default_type "text/plain";
-		root /tmp/letsencrypt;
+		root /var/letsencrypt_root;
 	}`
 			: ''
 	}
@@ -152,22 +170,22 @@ server {
 		return 301 https://$http_host$request_uri;
 	}
 	`
-			: generateResponse({ name })
+			: generateResponse(options)
 	}
 }`;
 }
 
 function generateConfig(options) {
-	return `
+	return normalizeCode(`
 ${generateHttp(options)}
 
 ${options.https ? generateHttps(options) : ''}
-`;
+`);
 }
 
 export default new Boilerplate({
 	title: 'Nginx config',
-	description: `Nginx virtual host boilerplate`,
+	description: `Nginx virtual host with HTTP, HTTPS, proxy, static site and a custom letsencrypt setup.`,
 
 	fields: [
 		{
@@ -178,29 +196,47 @@ export default new Boilerplate({
 			helpText: 'Space-separated list of domains. Eg. "example.com www.example.com"',
 		},
 		{
+			key: 'serverType',
+			label: 'Server type',
+			type: FIELD_TYPES.SELECT,
+			options: [
+				{ value: NGINX_SERVER_TYPES.proxy, title: 'Proxy' },
+				{ value: NGINX_SERVER_TYPES.static, title: 'Static' },
+			],
+			defaultValue: null,
+		},
+		{
+			key: 'proxyBackend',
+			label: 'Proxy backend',
+			type: FIELD_TYPES.TEXT,
+			exampleValue: 'http://localhost:3000',
+			helpText: 'Eg. "http://localhost:3000"',
+			displayIf: options => options.serverType === NGINX_SERVER_TYPES.proxy,
+		},
+		{
 			key: 'customLogs',
-			label: 'Custom logs?',
+			label: 'Custom logs',
 			type: FIELD_TYPES.TOGGLE,
 		},
 		{
 			key: 'strictSecurity',
-			label: 'Strict security?',
+			label: 'Strict security',
 			type: FIELD_TYPES.TOGGLE,
 		},
 		{
 			key: 'https',
-			label: 'Enable HTTPS?',
+			label: 'Enable HTTPS',
 			type: FIELD_TYPES.TOGGLE,
 		},
 		{
 			key: 'letsEncrypt',
-			label: 'LetsEncrypt support?',
+			label: 'Custom LetsEncrypt setup',
 			type: FIELD_TYPES.TOGGLE,
 			displayIf: options => options.https,
 		},
 		{
 			key: 'httpRedirect',
-			label: 'Redirect HTTP?',
+			label: 'Redirect HTTP to HTTPS',
 			type: FIELD_TYPES.TOGGLE,
 			displayIf: options => options.https,
 		},
@@ -216,13 +252,56 @@ export default new Boilerplate({
 		},
 
 		{
-			title: null,
+			title: 'Enable virtual host',
 			language: 'bash',
-			instructions: 'Execute this in your terminal to enable the virtual host',
+			wrap: true,
 			code: ({ name }) =>
 				`ln -s -T /etc/nginx/sites-available/${confFileName(
 					name
 				)} /etc/nginx/sites-enabled/${confFileName(name)}`,
+		},
+		{
+			title: 'Disable virtual host',
+			language: 'bash',
+			wrap: true,
+			code: ({ name }) => `rm -f /etc/nginx/sites-enabled/${confFileName(name)}`,
+		},
+		{
+			title: 'Check config and apply changes',
+			language: 'bash',
+			wrap: true,
+			code: `nginx -t && systemctl reload nginx`,
+		},
+		{
+			title: 'Prepare a temporary (fake) letsencrypt certificate',
+			language: 'bash',
+			wrap: true,
+			instructions: `This will symlink a self-signed certificate that comes with debian in the place of letsencrypt certificate, allowing you to enable the site. As soon as HTTP is working, you should immediately do the next snippet.`,
+			displayIf: ({ https, letsEncrypt }) => https && letsEncrypt,
+			code: ({ name }) =>
+				`mkdir -p /etc/letsencrypt/live/${mainName(name)} && ` +
+				`ln -s -T /etc/ssl/private/ssl-cert-snakeoil.key /etc/letsencrypt/live/test.pantas.net/privkey.pem && ` +
+				`ln -s -T /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/letsencrypt/live/test.pantas.net/fullchain.pem`,
+		},
+		{
+			title: 'Obtain letsencrypt certificate',
+			language: 'bash',
+			wrap: true,
+			instructions: `This will copy your current (fake?) certificate to /tmp and run certbot. If something goes wrong, we will try to revert the changes`,
+			displayIf: ({ https, letsEncrypt }) => https && letsEncrypt,
+			code: ({ name }) => {
+				const certName = mainName(name);
+				const domainArgs = name
+					.split(/\s+/g)
+					.map(site => '-d ' + site.trim())
+					.join(' ');
+				return (
+					`{ [ -d /etc/letsencrypt/live/${certName}} ] && rm -rf /tmp/letsencrypt-save-${certName} && mv /etc/letsencrypt/live/${certName} /tmp/letsencrypt-save-${certName} ; } ; ` +
+					`mkdir -p /var/letsencrypt_root && ` +
+					`certbot certonly --webroot --webroot-path /var/letsencrypt_root ${domainArgs} || ` +
+					`{ [ -d /tmp/letsencrypt-save-${certName} ] && mv /tmp/letsencrypt-save-${certName} /etc/letsencrypt/live/${certName} ; }`
+				);
+			},
 		},
 	],
 });

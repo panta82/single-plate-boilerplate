@@ -46,16 +46,6 @@ export class Boilerplate {
 		});
 		return result;
 	}
-
-	generateBlockData(options) {
-		return this.blocks.map(block => {
-			return {
-				...block,
-				instructions: block.instructions(options),
-				code: block.code(options),
-			};
-		});
-	}
 }
 
 export const FIELD_TYPES = {
@@ -141,6 +131,18 @@ export class BoilerplateBlock {
 		 * @type {function(options)}
 		 */
 		this.code = undefined;
+
+		/**
+		 * If true, the code block content will be wrapped
+		 * @type {boolean}
+		 */
+		this.wrap = undefined;
+
+		/**
+		 * Optional function, to determine when the block should be displayed
+		 * @type {function(options, boilerplate)}
+		 */
+		this.displayIf = undefined;
 
 		Object.assign(this, {
 			...source,

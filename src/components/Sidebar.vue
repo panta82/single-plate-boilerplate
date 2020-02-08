@@ -30,7 +30,7 @@ export default {
 	},
 	computed: {
 		/** @return {BoilerplateField[]} */
-		enabledFields: function() {
+		enabledFields() {
 			if (!this.options || !this.boilerplate) {
 				return null;
 			}

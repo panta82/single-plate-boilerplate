@@ -5,8 +5,8 @@
 		</a>
 		<section v-if="blocks">
 			<header>
-				<h1>{{ title }}</h1>
-				<h2>{{ description }}</h2>
+				<h1>{{ boilerplate ? boilerplate.title : '' }}</h1>
+				<h2>{{ boilerplate ? boilerplate.description : '' }}</h2>
 			</header>
 
 			<CodeBlock
@@ -16,6 +16,7 @@
 				:title="block.title"
 				:code="block.code"
 				:instructions="block.instructions"
+				:wrap="block.wrap"
 			/>
 		</section>
 	</div>
@@ -29,14 +30,36 @@ export default {
 	components: {
 		CodeBlock,
 	},
-	props: ['title', 'description', 'blocks'],
+	computed: {
+		/** @return {CodeBlock[]} */
+		blocks() {
+			if (!this.boilerplate || !this.options) {
+				return [];
+			}
+
+			const blocks = [];
+			for (const block of this.boilerplate.blocks || []) {
+				const display = !block.displayIf || block.displayIf(this.options, this.boilerplate);
+				if (!display) {
+					continue;
+				}
+				blocks.push({
+					...block,
+					instructions: block.instructions(this.options),
+					code: block.code(this.options),
+				});
+			}
+			return blocks;
+		},
+	},
+	props: ['boilerplate', 'options'],
 };
 </script>
 
 <style scoped>
 .Content {
 	background: linear-gradient(to bottom, #596876 0%, #262c32 100%);
-	min-height: 100vh;
+	min-height: 100%;
 }
 
 .repo {
