@@ -101,8 +101,8 @@ export default {
 
 .title {
 	color: #d1d5d5;
-	font-size: 16px;
-	margin: 5px 10px;
+	font-size: 14px;
+	margin: 2px 6px;
 	display: inline-block;
 }
 
