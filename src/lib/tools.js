@@ -46,3 +46,44 @@ export function normalizeCode(code) {
 
 	return resultLines.join('\n');
 }
+
+/**
+ * Microtemplating string expanderm uses *sh style format.
+ * @example
+ *   expandString("Hey $name", {name: "Jack"}); // --> Hey Jack
+ *   expandString("Take \\$${amount}!", {amount: 100}); // --> Take $100!
+ */
+export function expandString(str, data, notFound = '') {
+	if (!str) {
+		return str;
+	}
+
+	if (typeof notFound !== 'function') {
+		const notFoundValue = notFound;
+		notFound = () => notFoundValue;
+	}
+
+	return str
+		.replace(expandString.DIRECT_REGEX, directReplacer)
+		.replace(expandString.CURLY_BRACE_REGEX, pathReplacer)
+		.replace(expandString.ESCAPE_CLEANUP_REGEX, '$');
+
+	function directReplacer(_, space, key) {
+		var value = data[key];
+		if (value === undefined) {
+			value = notFound(key, data, str);
+		}
+		return (space || '') + value;
+	}
+
+	function pathReplacer(_, space, key) {
+		var value = data[key];
+		if (value === undefined) {
+			value = notFound(key, data, str);
+		}
+		return (space || '') + value;
+	}
+}
+expandString.DIRECT_REGEX = /([^\\]|^)\$([A-Za-z$_][A-Za-z$_0-9]*)/g;
+expandString.CURLY_BRACE_REGEX = /([^\\]|^)\${([^}]+)}/g;
+expandString.ESCAPE_CLEANUP_REGEX = /\\\$/g;

@@ -1,5 +1,5 @@
 import { Boilerplate, FIELD_TYPES } from '../lib/types';
-import { normalizeCode } from '../lib/tools';
+import { expandString, normalizeCode } from '../lib/tools';
 
 const NGINX_SERVER_TYPES = {
 	none: 'none',
@@ -70,6 +70,14 @@ function generateSecurity(enabled, headers, https) {
 
 function generateProxyResponse({ proxyBackend }) {
 	return `
+	## Increase max body size, to prevent strange errors
+	client_max_body_size 200M;
+
+	## Prevent problems with JWT token size
+	large_client_header_buffers 8 64k;
+	proxy_buffers               8 32k;
+	proxy_buffer_size             32k;
+	
 	## Proxy pass
 	location / {
 		proxy_pass ${proxyBackend};
@@ -87,24 +95,34 @@ function generateProxyResponse({ proxyBackend }) {
 	}`;
 }
 
-function generateResponse({ serverType, proxyBackend }) {
-	const responseDef =
-		serverType === NGINX_SERVER_TYPES.proxy ? generateProxyResponse({ proxyBackend }) : '';
-
-	return (
-		`
-	## Increase max body size, to prevent strange errors
-	client_max_body_size 200M;
-
-	## Prevent problems with JWT token size
-	large_client_header_buffers 8 64k;
-	proxy_buffers               8 32k;
-	proxy_buffer_size             32k;
-` + responseDef
-	);
+function generateStaticResponse({ name, contentRoot, contentIndex, spaHandling }) {
+	return `
+	## Static response
+	root ${expandString(contentRoot, { name: tokenizedName(name) })};
+  index ${contentIndex || ''};
+  
+  ${
+		spaHandling
+			? `## Handle Single Page Application routes
+  location / {
+    try_files $uri /index.html =404;
+  }`
+			: ''
+	}`;
 }
 
-function generateHttps({ name, letsEncrypt, strictSecurity, ...options }) {
+function generateResponse({ serverType, ...options }) {
+	if (serverType === NGINX_SERVER_TYPES.proxy) {
+		return generateProxyResponse(options);
+	}
+	if (serverType === NGINX_SERVER_TYPES.static) {
+		return generateStaticResponse(options);
+	}
+	return '';
+}
+
+function generateHttps(options) {
+	const { name, letsEncrypt, strictSecurity } = options;
 	return `
 ## HTTPS
 server {
@@ -129,15 +147,8 @@ server {
 `;
 }
 
-function generateHttp({
-	name,
-	customLogs,
-	https,
-	letsEncrypt,
-	httpRedirect,
-	strictSecurity,
-	...options
-}) {
+function generateHttp(options) {
+	const { name, customLogs, https, letsEncrypt, httpRedirect, strictSecurity } = options;
 	return `
 server {
 	listen 80;
@@ -214,6 +225,29 @@ export default new Boilerplate({
 			displayIf: options => options.serverType === NGINX_SERVER_TYPES.proxy,
 		},
 		{
+			key: 'contentRoot',
+			label: 'Content root',
+			type: FIELD_TYPES.TEXT,
+			exampleValue: '/var/www/${name}',
+			helpText: 'If you include "$name", it will be replaced with main server name',
+			displayIf: options => options.serverType === NGINX_SERVER_TYPES.static,
+		},
+		{
+			key: 'contentIndex',
+			label: 'Content index',
+			type: FIELD_TYPES.TEXT,
+			defaultValue: 'index.html index.htm',
+			helpText: 'Space-separated list of files to serve',
+			displayIf: options => options.serverType === NGINX_SERVER_TYPES.static,
+		},
+		{
+			key: 'spaHandling',
+			label: 'SPA handling',
+			type: FIELD_TYPES.TOGGLE,
+			defaultValue: true,
+			displayIf: options => options.serverType === NGINX_SERVER_TYPES.static,
+		},
+		{
 			key: 'customLogs',
 			label: 'Custom logs',
 			type: FIELD_TYPES.TOGGLE,
@@ -229,14 +263,14 @@ export default new Boilerplate({
 			type: FIELD_TYPES.TOGGLE,
 		},
 		{
-			key: 'letsEncrypt',
-			label: 'Custom LetsEncrypt setup',
+			key: 'httpRedirect',
+			label: 'Redirect HTTP to HTTPS',
 			type: FIELD_TYPES.TOGGLE,
 			displayIf: options => options.https,
 		},
 		{
-			key: 'httpRedirect',
-			label: 'Redirect HTTP to HTTPS',
+			key: 'letsEncrypt',
+			label: 'Custom LetsEncrypt setup',
 			type: FIELD_TYPES.TOGGLE,
 			displayIf: options => options.https,
 		},
