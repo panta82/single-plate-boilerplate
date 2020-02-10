@@ -41,10 +41,10 @@ export default {
 	},
 
 	mounted() {
-		// TODO: Uncomment
-		// this.colorInterval = setInterval(() => {
-		// 	this.color = this.color < 360 ? this.color + 1 : 0;
-		// }, 300);
+		// TODO: Find a way to disable this in development. .env?
+		this.colorInterval = setInterval(() => {
+			this.color = this.color < 360 ? this.color + 1 : 0;
+		}, 300);
 	},
 
 	beforeDestroy() {
