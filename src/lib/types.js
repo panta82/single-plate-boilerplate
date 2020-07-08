@@ -146,6 +146,7 @@ export class BoilerplateBlock {
 
 		Object.assign(this, {
 			...source,
+			language: source ? functionize(source.language) : () => undefined,
 			instructions: source ? functionize(source.instructions) : () => undefined,
 			code: source ? functionize(source.code) : () => undefined,
 		});

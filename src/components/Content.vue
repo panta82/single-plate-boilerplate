@@ -45,6 +45,7 @@ export default {
 				}
 				blocks.push({
 					...block,
+					language: block.language(this.options),
 					instructions: block.instructions(this.options),
 					code: block.code(this.options),
 				});
