@@ -5,7 +5,12 @@
     <BoilerplateSelect :boilerplates="boilerplates" v-model="boilerplate" />
 
     <div v-if="enabledFields && options">
-      <FieldAdapter v-for="field in enabledFields" :field="field" v-model="options[field.key]" />
+      <FieldAdapter
+        v-for="field in enabledFields"
+        :key="field.key"
+        :field="field"
+        v-model="options[field.key]"
+      />
     </div>
 
     <ArrowIcon v-if="!boilerplate" />
