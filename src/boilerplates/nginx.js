@@ -2,35 +2,35 @@ import { Boilerplate, FIELD_TYPES } from '../lib/types';
 import { expandString, normalizeCode } from '../lib/tools';
 
 const NGINX_SERVER_TYPES = {
-	none: 'none',
-	proxy: 'proxy',
-	static: 'static',
+  none: 'none',
+  proxy: 'proxy',
+  static: 'static',
 };
 
 function mainName(name) {
-	return (name || '').split(' ')[0];
+  return (name || '').split(' ')[0];
 }
 
 function tokenizedName(name) {
-	return mainName(name).replace(/\./g, '_');
+  return mainName(name).replace(/\./g, '_');
 }
 
 function confFileName(name) {
-	return name ? tokenizedName(name) + '.nginx' : '';
+  return name ? tokenizedName(name) + '.nginx' : '';
 }
 
 function generateSecurity(enabled, headers, https) {
-	if (!enabled) {
-		return '';
-	}
+  if (!enabled) {
+    return '';
+  }
 
-	return `
+  return `
 	## Do not display server info in responses
 	server_tokens off;
 	
 	${
-		headers
-			? `
+    headers
+      ? `
 	## Security headers
 	add_header X-Frame-Options "SAMEORIGIN" always;
 	add_header X-XSS-Protection "1; mode=block" always;
@@ -38,12 +38,12 @@ function generateSecurity(enabled, headers, https) {
 	add_header Referrer-Policy "no-referrer-when-downgrade" always;
 	add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 'unsafe-inline'" always;
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always; `
-			: ''
-	}
+      : ''
+  }
 	
 	${
-		https
-			? `
+    https
+      ? `
 	## SSL security
 	ssl_session_timeout 1d;
 	ssl_session_cache shared:SSL:10m;
@@ -63,13 +63,13 @@ function generateSecurity(enabled, headers, https) {
 	resolver 1.1.1.1 1.0.0.1 8.8.8.8 8.8.4.4 208.67.222.222 208.67.220.220 valid=60s;
 	resolver_timeout 2s;
 	`
-			: ''
-	}
+      : ''
+  }
 	`;
 }
 
 function generateProxyResponse({ proxyBackend }) {
-	return `
+  return `
 	## Increase max body size, to prevent strange errors
 	client_max_body_size 200M;
 
@@ -96,34 +96,34 @@ function generateProxyResponse({ proxyBackend }) {
 }
 
 function generateStaticResponse({ name, contentRoot, contentIndex, spaHandling }) {
-	return `
+  return `
 	## Static response
 	root ${expandString(contentRoot, { name: tokenizedName(name) })};
   index ${contentIndex || ''};
   
   ${
-		spaHandling
-			? `## Handle Single Page Application routes
+    spaHandling
+      ? `## Handle Single Page Application routes
   location / {
     try_files $uri /index.html =404;
   }`
-			: ''
-	}`;
+      : ''
+  }`;
 }
 
 function generateResponse({ serverType, ...options }) {
-	if (serverType === NGINX_SERVER_TYPES.proxy) {
-		return generateProxyResponse(options);
-	}
-	if (serverType === NGINX_SERVER_TYPES.static) {
-		return generateStaticResponse(options);
-	}
-	return '';
+  if (serverType === NGINX_SERVER_TYPES.proxy) {
+    return generateProxyResponse(options);
+  }
+  if (serverType === NGINX_SERVER_TYPES.static) {
+    return generateStaticResponse(options);
+  }
+  return '';
 }
 
 function generateHttps(options) {
-	const { name, letsEncrypt, strictSecurity } = options;
-	return `
+  const { name, letsEncrypt, strictSecurity } = options;
+  return `
 ## HTTPS
 server {
 	listen 443 ssl;
@@ -133,12 +133,12 @@ server {
 
 	## SSL Certificate
 	${
-		letsEncrypt
-			? `ssl_certificate /etc/letsencrypt/live/${mainName(name)}/fullchain.pem;
+    letsEncrypt
+      ? `ssl_certificate /etc/letsencrypt/live/${mainName(name)}/fullchain.pem;
 	ssl_certificate_key /etc/letsencrypt/live/${mainName(name)}/privkey.pem;`
-			: `ssl_certificate /root/${mainName(name)}.cert;
+      : `ssl_certificate /root/${mainName(name)}.cert;
 	ssl_certificate_key /root/${mainName(name)}.key;`
-	}
+  }
 	
 	${generateSecurity(strictSecurity, true, true)}
 	
@@ -148,46 +148,46 @@ server {
 }
 
 function generateHttp(options) {
-	const { name, customLogs, https, letsEncrypt, httpRedirect, strictSecurity } = options;
-	return `
+  const { name, customLogs, https, letsEncrypt, httpRedirect, strictSecurity } = options;
+  return `
 server {
 	listen 80;
 	server_name ${name};
 
 	${
-		customLogs
-			? `## Customized log files
+    customLogs
+      ? `## Customized log files
 	access_log /var/log/nginx/${tokenizedName(name)}_access.log;
 	error_log  /var/log/nginx/${tokenizedName(name)}_error.log;`
-			: ''
-	}
+      : ''
+  }
 	
 	${generateSecurity(strictSecurity, !https || !httpRedirect, false)}
 
 	${
-		https && letsEncrypt
-			? `## Lets encrypt handler
+    https && letsEncrypt
+      ? `## Lets encrypt handler
 	location '/.well-known/acme-challenge' {
 		default_type "text/plain";
 		root /var/letsencrypt_root;
 	}`
-			: ''
-	}
+      : ''
+  }
 
 	${
-		https && httpRedirect
-			? `## HTTPS redirect
+    https && httpRedirect
+      ? `## HTTPS redirect
 	location / {
 		return 301 https://$http_host$request_uri;
 	}
 	`
-			: generateResponse(options)
-	}
+      : generateResponse(options)
+  }
 }`;
 }
 
 function generateConfig(options) {
-	return normalizeCode(`
+  return normalizeCode(`
 ${generateHttp(options)}
 
 ${options.https ? generateHttps(options) : ''}
@@ -195,147 +195,147 @@ ${options.https ? generateHttps(options) : ''}
 }
 
 export default new Boilerplate({
-	title: 'Nginx config',
-	description: `Nginx virtual host with HTTP, HTTPS, proxy, static site and a custom letsencrypt setup.`,
+  title: 'Nginx config',
+  description: `Nginx virtual host with HTTP, HTTPS, proxy, static site and a custom letsencrypt setup.`,
 
-	fields: [
-		{
-			key: 'name',
-			label: 'Server name',
-			type: FIELD_TYPES.TEXT,
-			exampleValue: 'example.com www.example.com',
-			helpText: 'Space-separated list of domains. Eg. "example.com www.example.com"',
-		},
-		{
-			key: 'serverType',
-			label: 'Server type',
-			type: FIELD_TYPES.SELECT,
-			options: [
-				{ value: NGINX_SERVER_TYPES.proxy, title: 'Proxy' },
-				{ value: NGINX_SERVER_TYPES.static, title: 'Static' },
-			],
-			defaultValue: null,
-		},
-		{
-			key: 'proxyBackend',
-			label: 'Proxy backend',
-			type: FIELD_TYPES.TEXT,
-			exampleValue: 'http://localhost:3000',
-			helpText: 'Eg. "http://localhost:3000"',
-			displayIf: options => options.serverType === NGINX_SERVER_TYPES.proxy,
-		},
-		{
-			key: 'contentRoot',
-			label: 'Content root',
-			type: FIELD_TYPES.TEXT,
-			exampleValue: '/var/www/${name}',
-			helpText: 'If you include "$name", it will be replaced with main server name',
-			displayIf: options => options.serverType === NGINX_SERVER_TYPES.static,
-		},
-		{
-			key: 'contentIndex',
-			label: 'Content index',
-			type: FIELD_TYPES.TEXT,
-			defaultValue: 'index.html index.htm',
-			helpText: 'Space-separated list of files to serve',
-			displayIf: options => options.serverType === NGINX_SERVER_TYPES.static,
-		},
-		{
-			key: 'spaHandling',
-			label: 'SPA handling',
-			type: FIELD_TYPES.TOGGLE,
-			defaultValue: true,
-			displayIf: options => options.serverType === NGINX_SERVER_TYPES.static,
-		},
-		{
-			key: 'customLogs',
-			label: 'Custom logs',
-			type: FIELD_TYPES.TOGGLE,
-		},
-		{
-			key: 'strictSecurity',
-			label: 'Strict security',
-			type: FIELD_TYPES.TOGGLE,
-		},
-		{
-			key: 'https',
-			label: 'Enable HTTPS',
-			type: FIELD_TYPES.TOGGLE,
-		},
-		{
-			key: 'httpRedirect',
-			label: 'Redirect HTTP to HTTPS',
-			type: FIELD_TYPES.TOGGLE,
-			displayIf: options => options.https,
-		},
-		{
-			key: 'letsEncrypt',
-			label: 'Custom LetsEncrypt setup',
-			type: FIELD_TYPES.TOGGLE,
-			displayIf: options => options.https,
-		},
-	],
+  fields: [
+    {
+      key: 'name',
+      label: 'Server name',
+      type: FIELD_TYPES.TEXT,
+      exampleValue: 'example.com www.example.com',
+      helpText: 'Space-separated list of domains. Eg. "example.com www.example.com"',
+    },
+    {
+      key: 'serverType',
+      label: 'Server type',
+      type: FIELD_TYPES.SELECT,
+      options: [
+        { value: NGINX_SERVER_TYPES.proxy, title: 'Proxy' },
+        { value: NGINX_SERVER_TYPES.static, title: 'Static' },
+      ],
+      defaultValue: null,
+    },
+    {
+      key: 'proxyBackend',
+      label: 'Proxy backend',
+      type: FIELD_TYPES.TEXT,
+      exampleValue: 'http://localhost:3000',
+      helpText: 'Eg. "http://localhost:3000"',
+      displayIf: options => options.serverType === NGINX_SERVER_TYPES.proxy,
+    },
+    {
+      key: 'contentRoot',
+      label: 'Content root',
+      type: FIELD_TYPES.TEXT,
+      exampleValue: '/var/www/${name}',
+      helpText: 'If you include "$name", it will be replaced with main server name',
+      displayIf: options => options.serverType === NGINX_SERVER_TYPES.static,
+    },
+    {
+      key: 'contentIndex',
+      label: 'Content index',
+      type: FIELD_TYPES.TEXT,
+      defaultValue: 'index.html index.htm',
+      helpText: 'Space-separated list of files to serve',
+      displayIf: options => options.serverType === NGINX_SERVER_TYPES.static,
+    },
+    {
+      key: 'spaHandling',
+      label: 'SPA handling',
+      type: FIELD_TYPES.TOGGLE,
+      defaultValue: true,
+      displayIf: options => options.serverType === NGINX_SERVER_TYPES.static,
+    },
+    {
+      key: 'customLogs',
+      label: 'Custom logs',
+      type: FIELD_TYPES.TOGGLE,
+    },
+    {
+      key: 'strictSecurity',
+      label: 'Strict security',
+      type: FIELD_TYPES.TOGGLE,
+    },
+    {
+      key: 'https',
+      label: 'Enable HTTPS',
+      type: FIELD_TYPES.TOGGLE,
+    },
+    {
+      key: 'httpRedirect',
+      label: 'Redirect HTTP to HTTPS',
+      type: FIELD_TYPES.TOGGLE,
+      displayIf: options => options.https,
+    },
+    {
+      key: 'letsEncrypt',
+      label: 'Custom LetsEncrypt setup',
+      type: FIELD_TYPES.TOGGLE,
+      displayIf: options => options.https,
+    },
+  ],
 
-	blocks: [
-		{
-			title: null,
-			language: 'nginx',
-			instructions: ({ name }) =>
-				`Paste this into /etc/nginx/sites-available/${confFileName(name)}`,
-			code: generateConfig,
-		},
+  blocks: [
+    {
+      title: null,
+      language: 'nginx',
+      instructions: ({ name }) =>
+        `Paste this into /etc/nginx/sites-available/${confFileName(name)}`,
+      code: generateConfig,
+    },
 
-		{
-			title: 'Enable virtual host',
-			language: 'bash',
-			wrap: true,
-			code: ({ name }) =>
-				`ln -s -T /etc/nginx/sites-available/${confFileName(
-					name
-				)} /etc/nginx/sites-enabled/${confFileName(name)}`,
-		},
-		{
-			title: 'Disable virtual host',
-			language: 'bash',
-			wrap: true,
-			code: ({ name }) => `rm -f /etc/nginx/sites-enabled/${confFileName(name)}`,
-		},
-		{
-			title: 'Check config and apply changes',
-			language: 'bash',
-			wrap: true,
-			code: `nginx -t && systemctl reload nginx`,
-		},
-		{
-			title: 'Prepare a temporary (fake) letsencrypt certificate',
-			language: 'bash',
-			wrap: true,
-			instructions: `This will symlink a self-signed certificate that comes with debian in the place of letsencrypt certificate, allowing you to enable the site. As soon as HTTP is working, you should immediately do the next snippet.`,
-			displayIf: ({ https, letsEncrypt }) => https && letsEncrypt,
-			code: ({ name }) =>
-				`mkdir -p /etc/letsencrypt/live/${mainName(name)} && ` +
-				`ln -s -T /etc/ssl/private/ssl-cert-snakeoil.key /etc/letsencrypt/live/test.pantas.net/privkey.pem && ` +
-				`ln -s -T /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/letsencrypt/live/test.pantas.net/fullchain.pem`,
-		},
-		{
-			title: 'Obtain letsencrypt certificate',
-			language: 'bash',
-			wrap: true,
-			instructions: `This will copy your current (fake?) certificate to /tmp and run certbot. If something goes wrong, we will try to revert the changes`,
-			displayIf: ({ https, letsEncrypt }) => https && letsEncrypt,
-			code: ({ name }) => {
-				const certName = mainName(name);
-				const domainArgs = name
-					.split(/\s+/g)
-					.map(site => '-d ' + site.trim())
-					.join(' ');
-				return (
-					`{ [ -d /etc/letsencrypt/live/${certName}} ] && rm -rf /tmp/letsencrypt-save-${certName} && mv /etc/letsencrypt/live/${certName} /tmp/letsencrypt-save-${certName} ; } ; ` +
-					`mkdir -p /var/letsencrypt_root && ` +
-					`certbot certonly --webroot --webroot-path /var/letsencrypt_root ${domainArgs} || ` +
-					`{ [ -d /tmp/letsencrypt-save-${certName} ] && mv /tmp/letsencrypt-save-${certName} /etc/letsencrypt/live/${certName} ; }`
-				);
-			},
-		},
-	],
+    {
+      title: 'Enable virtual host',
+      language: 'bash',
+      wrap: true,
+      code: ({ name }) =>
+        `ln -s -T /etc/nginx/sites-available/${confFileName(
+          name
+        )} /etc/nginx/sites-enabled/${confFileName(name)}`,
+    },
+    {
+      title: 'Disable virtual host',
+      language: 'bash',
+      wrap: true,
+      code: ({ name }) => `rm -f /etc/nginx/sites-enabled/${confFileName(name)}`,
+    },
+    {
+      title: 'Check config and apply changes',
+      language: 'bash',
+      wrap: true,
+      code: `nginx -t && systemctl reload nginx`,
+    },
+    {
+      title: 'Prepare a temporary (fake) letsencrypt certificate',
+      language: 'bash',
+      wrap: true,
+      instructions: `This will symlink a self-signed certificate that comes with debian in the place of letsencrypt certificate, allowing you to enable the site. As soon as HTTP is working, you should immediately do the next snippet.`,
+      displayIf: ({ https, letsEncrypt }) => https && letsEncrypt,
+      code: ({ name }) =>
+        `mkdir -p /etc/letsencrypt/live/${mainName(name)} && ` +
+        `ln -s -T /etc/ssl/private/ssl-cert-snakeoil.key /etc/letsencrypt/live/test.pantas.net/privkey.pem && ` +
+        `ln -s -T /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/letsencrypt/live/test.pantas.net/fullchain.pem`,
+    },
+    {
+      title: 'Obtain letsencrypt certificate',
+      language: 'bash',
+      wrap: true,
+      instructions: `This will copy your current (fake?) certificate to /tmp and run certbot. If something goes wrong, we will try to revert the changes`,
+      displayIf: ({ https, letsEncrypt }) => https && letsEncrypt,
+      code: ({ name }) => {
+        const certName = mainName(name);
+        const domainArgs = name
+          .split(/\s+/g)
+          .map(site => '-d ' + site.trim())
+          .join(' ');
+        return (
+          `{ [ -d /etc/letsencrypt/live/${certName}} ] && rm -rf /tmp/letsencrypt-save-${certName} && mv /etc/letsencrypt/live/${certName} /tmp/letsencrypt-save-${certName} ; } ; ` +
+          `mkdir -p /var/letsencrypt_root && ` +
+          `certbot certonly --webroot --webroot-path /var/letsencrypt_root ${domainArgs} || ` +
+          `{ [ -d /tmp/letsencrypt-save-${certName} ] && mv /tmp/letsencrypt-save-${certName} /etc/letsencrypt/live/${certName} ; }`
+        );
+      },
+    },
+  ],
 });

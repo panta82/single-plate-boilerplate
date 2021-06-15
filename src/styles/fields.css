@@ -1,91 +1,91 @@
 .field + .field {
-	margin-top: 20px;
+  margin-top: 20px;
 }
 
 .field label {
-	font-weight: normal;
-	color: #5a5a5a;
-	font-size: 14px;
+  font-weight: normal;
+  color: #5a5a5a;
+  font-size: 14px;
 }
 
 /* TEXT *****************************************************************************/
 
 .field input[type='text'],
 .field input[type='number'] {
-	display: block;
-	width: 100%;
-	border: 2px solid #5a5a5a;
-	background: #f7f7f7;
-	padding: 0.5em;
-	font-size: 1em;
-	transition: all 0.3s;
+  display: block;
+  width: 100%;
+  border: 2px solid #5a5a5a;
+  background: #f7f7f7;
+  padding: 0.5em;
+  font-size: 1em;
+  transition: all 0.3s;
 }
 
 .field input[type='text']:focus,
 .field input[type='number']:focus,
 .field input[type='text']:active,
 .field input[type='number']:active {
-	background: white;
-	border-color: var(--primary);
-	outline: none;
+  background: white;
+  border-color: var(--primary);
+  outline: none;
 }
 
 /* SELECT *****************************************************************************/
 
 .field .v-select {
-	display: block;
+  display: block;
 }
 
 .field .v-select .dropdown-toggle {
-	white-space: nowrap;
-	border: 2px solid #5a5a5a;
-	border-radius: 0;
-	background: #f7f7f7;
-	transition: all 0.3s;
+  white-space: nowrap;
+  border: 2px solid #5a5a5a;
+  border-radius: 0;
+  background: #f7f7f7;
+  transition: all 0.3s;
 }
 
 .field .v-select.open .dropdown-toggle {
-	border-color: var(--primary);
-	background-color: white;
+  border-color: var(--primary);
+  background-color: white;
 }
 
 .field .v-select .selected-tag {
-	position: absolute;
-	max-width: calc(100% - 50px);
-	overflow: hidden;
-	vertical-align: middle;
-	text-overflow: ellipsis;
+  position: absolute;
+  max-width: calc(100% - 50px);
+  overflow: hidden;
+  vertical-align: middle;
+  text-overflow: ellipsis;
 }
 
 .field .v-select .dropdown-toggle .clear {
-	color: #5a5a5a;
-	bottom: 6px;
+  color: #5a5a5a;
+  bottom: 6px;
 }
 
 .field .v-select .dropdown-toggle .open-indicator:before {
-	border-color: #5a5a5a;
+  border-color: #5a5a5a;
 }
 
 .field .v-select .dropdown-menu {
-	border: 2px solid var(--primary);
-	border-radius: 0;
-	border-top: none;
-	margin-top: -2px;
-	background-color: white;
-	overflow-y: auto;
+  border: 2px solid var(--primary);
+  border-radius: 0;
+  border-top: none;
+  margin-top: -2px;
+  background-color: white;
+  overflow-y: auto;
 }
 .field .v-select .dropdown-menu li a {
-	overflow: hidden;
-	text-overflow: ellipsis;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .field .v-select .dropdown-menu li.highlight a {
-	background-color: var(--primary);
+  background-color: var(--primary);
 }
 .field .field-help-text {
-	color: rgba(0, 0, 0, 0.4);
-	font-size: 12px;
-	font-weight: normal;
-	margin-top: 4px;
-	margin-left: 4px;
-	margin-right: 4px;
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 12px;
+  font-weight: normal;
+  margin-top: 4px;
+  margin-left: 4px;
+  margin-right: 4px;
 }

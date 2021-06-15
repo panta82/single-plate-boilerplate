@@ -1,7 +1,7 @@
 import { Boilerplate, FIELD_TYPES } from '../lib/types';
 
 function generateScript({ name }) {
-	return `
+  return `
 #!/usr/bin/env bash
 
 set -o errexit
@@ -69,23 +69,23 @@ main $*
 }
 
 export default new Boilerplate({
-	title: 'Bash script',
-	description: `Bash script with a few basic amenities and command line parsing`,
+  title: 'Bash script',
+  description: `Bash script with a few basic amenities and command line parsing`,
 
-	fields: [
-		{
-			key: 'name',
-			label: 'Script name',
-			type: FIELD_TYPES.TEXT,
-			defaultValue: 'my-script',
-		},
-	],
+  fields: [
+    {
+      key: 'name',
+      label: 'Script name',
+      type: FIELD_TYPES.TEXT,
+      defaultValue: 'my-script',
+    },
+  ],
 
-	blocks: [
-		{
-			language: 'bash',
-			instructions: `Add this to your bash script. Don't forget to make it executable`,
-			code: generateScript,
-		},
-	],
+  blocks: [
+    {
+      language: 'bash',
+      instructions: `Add this to your bash script. Don't forget to make it executable`,
+      code: generateScript,
+    },
+  ],
 });

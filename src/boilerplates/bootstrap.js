@@ -1,14 +1,14 @@
 import { Boilerplate, FIELD_TYPES } from '../lib/types';
 
 function prependLines(targetStr, withStr) {
-	return targetStr
-		.split(/\n\r|\r\n|\r|\n/g)
-		.map(str => (str ? withStr + str : str))
-		.join('\n');
+  return targetStr
+    .split(/\n\r|\r\n|\r|\n/g)
+    .map(str => (str ? withStr + str : str))
+    .join('\n');
 }
 
 function generateHTML({ favicon, navbarDark, navbarContainer, jumbotron, form }) {
-	let navbarHTML = `
+  let navbarHTML = `
 			<a class="navbar-brand" href="#">Navbar</a>
 			<button class="navbar-toggler" type="button"
 					data-toggle="collapse" data-target="#navbarsExampleDefault"
@@ -48,16 +48,16 @@ function generateHTML({ favicon, navbarDark, navbarContainer, jumbotron, form })
 			</div>
 `;
 
-	if (navbarContainer) {
-		navbarHTML =
-			`\n			<div class="container d-flex justify-content-between">` +
-			prependLines(navbarHTML, '\t') +
-			`			</div>\n`;
-	}
+  if (navbarContainer) {
+    navbarHTML =
+      `\n			<div class="container d-flex justify-content-between">` +
+      prependLines(navbarHTML, '\t') +
+      `			</div>\n`;
+  }
 
-	let jumbotronHTML = '';
-	if (jumbotron) {
-		jumbotronHTML = `
+  let jumbotronHTML = '';
+  if (jumbotron) {
+    jumbotronHTML = `
 		<div class="jumbotron">
 			<div class="container">
 				<h1 class="display-3">Hello, world!</h1>
@@ -66,11 +66,11 @@ function generateHTML({ favicon, navbarDark, navbarContainer, jumbotron, form })
 			</div>
 		</div>
 `;
-	}
+  }
 
-	let formHTML = '';
-	if (form) {
-		formHTML = `
+  let formHTML = '';
+  if (form) {
+    formHTML = `
 			<hr />
 			<form>
 				<div class="form-row">
@@ -123,9 +123,9 @@ function generateHTML({ favicon, navbarDark, navbarContainer, jumbotron, form })
 				<button type="submit" class="btn btn-primary">Sign in</button>
 			</form>
 `;
-	}
+  }
 
-	return `
+  return `
 <!doctype html>
 <html lang="en">
 	<head>
@@ -149,8 +149,8 @@ ${favicon ? `		<link rel="icon" href="favicon.ico">\n` : ''}
 	<body>
 		
 		<nav class="navbar navbar-expand-md ${
-			navbarDark ? 'navbar-dark bg-dark' : 'navbar-light bg-light'
-		}">
+      navbarDark ? 'navbar-dark bg-dark' : 'navbar-light bg-light'
+    }">
 ${navbarHTML}
 		</nav>
 ${jumbotronHTML}
@@ -183,48 +183,48 @@ ${formHTML}
 }
 
 export default new Boilerplate({
-	title: 'Bootstrap page',
-	description: `Bootstrap 4.x starter template with navbar. Assets are drawn from CDN-s.`,
+  title: 'Bootstrap page',
+  description: `Bootstrap 4.x starter template with navbar. Assets are drawn from CDN-s.`,
 
-	fields: [
-		{
-			key: 'favicon',
-			label: 'Favicon',
-			type: FIELD_TYPES.TOGGLE,
-			defaultValue: true,
-		},
-		{
-			key: 'navbarDark',
-			label: 'Dark navbar',
-			type: FIELD_TYPES.TOGGLE,
-			defaultValue: false,
-		},
-		{
-			key: 'navbarContainer',
-			label: 'Navbar container',
-			type: FIELD_TYPES.TOGGLE,
-			defaultValue: true,
-		},
-		{
-			key: 'jumbotron',
-			label: 'Jumbotron',
-			type: FIELD_TYPES.TOGGLE,
-			defaultValue: false,
-		},
-		{
-			key: 'form',
-			label: 'Form example',
-			type: FIELD_TYPES.TOGGLE,
-			defaultValue: false,
-		},
-	],
+  fields: [
+    {
+      key: 'favicon',
+      label: 'Favicon',
+      type: FIELD_TYPES.TOGGLE,
+      defaultValue: true,
+    },
+    {
+      key: 'navbarDark',
+      label: 'Dark navbar',
+      type: FIELD_TYPES.TOGGLE,
+      defaultValue: false,
+    },
+    {
+      key: 'navbarContainer',
+      label: 'Navbar container',
+      type: FIELD_TYPES.TOGGLE,
+      defaultValue: true,
+    },
+    {
+      key: 'jumbotron',
+      label: 'Jumbotron',
+      type: FIELD_TYPES.TOGGLE,
+      defaultValue: false,
+    },
+    {
+      key: 'form',
+      label: 'Form example',
+      type: FIELD_TYPES.TOGGLE,
+      defaultValue: false,
+    },
+  ],
 
-	blocks: [
-		{
-			title: null,
-			language: 'html',
-			instructions: 'Paste this into your HTML file',
-			code: generateHTML,
-		},
-	],
+  blocks: [
+    {
+      title: null,
+      language: 'html',
+      instructions: 'Paste this into your HTML file',
+      code: generateHTML,
+    },
+  ],
 });

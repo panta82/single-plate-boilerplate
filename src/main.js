@@ -17,5 +17,5 @@ Vue.config.productionTip = false;
 Vue.prototype.$store = new Store();
 
 new Vue({
-	render: h => h(App)
+  render: h => h(App),
 }).$mount('#app');

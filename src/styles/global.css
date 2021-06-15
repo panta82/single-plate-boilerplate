@@ -2,16 +2,16 @@
 
 body,
 html {
-	padding: 0;
-	margin: 0;
+  padding: 0;
+  margin: 0;
 }
 
 * {
-	box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 #App {
-	font-family: 'Fira Sans', sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+  font-family: 'Fira Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

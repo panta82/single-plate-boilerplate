@@ -1,38 +1,38 @@
 <template>
-	<NumberField
-		v-if="field.type === 'NUMBER'"
-		:label="field.label"
-		:value="value"
-		:help-text="field.helpText"
-		@input="$emit('input', $event)"
-	/>
+  <NumberField
+    v-if="field.type === 'NUMBER'"
+    :label="field.label"
+    :value="value"
+    :help-text="field.helpText"
+    @input="$emit('input', $event)"
+  />
 
-	<TextField
-		v-else-if="field.type === 'TEXT'"
-		:label="field.label"
-		:value="value"
-		:help-text="field.helpText"
-		@input="$emit('input', $event)"
-	/>
+  <TextField
+    v-else-if="field.type === 'TEXT'"
+    :label="field.label"
+    :value="value"
+    :help-text="field.helpText"
+    @input="$emit('input', $event)"
+  />
 
-	<ToggleField
-		v-else-if="field.type === 'TOGGLE'"
-		:label="field.label"
-		:value="value"
-		@input="$emit('input', $event)"
-	/>
+  <ToggleField
+    v-else-if="field.type === 'TOGGLE'"
+    :label="field.label"
+    :value="value"
+    @input="$emit('input', $event)"
+  />
 
-	<SelectField
-		v-else-if="field.type === 'SELECT'"
-		:label="field.label"
-		:value="value"
-		:options="field.options"
-		:defaultValue="field.defaultValue"
-		:help-text="field.helpText"
-		@input="$emit('input', $event)"
-	/>
+  <SelectField
+    v-else-if="field.type === 'SELECT'"
+    :label="field.label"
+    :value="value"
+    :options="field.options"
+    :defaultValue="field.defaultValue"
+    :help-text="field.helpText"
+    @input="$emit('input', $event)"
+  />
 
-	<div v-else class="error">Unsupported field type: "{{ field.type }}"</div>
+  <div v-else class="error">Unsupported field type: "{{ field.type }}"</div>
 </template>
 
 <script>
@@ -42,20 +42,20 @@ import ToggleField from './ToggleField.vue';
 import SelectField from './SelectField.vue';
 
 export default {
-	name: 'FieldAdapter',
-	props: ['field', 'value'],
+  name: 'FieldAdapter',
+  props: ['field', 'value'],
 
-	components: {
-		NumberField,
-		TextField,
-		ToggleField,
-		SelectField,
-	},
+  components: {
+    NumberField,
+    TextField,
+    ToggleField,
+    SelectField,
+  },
 };
 </script>
 
 <style scoped>
 .error {
-	color: red;
+  color: red;
 }
 </style>
